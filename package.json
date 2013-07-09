@@ -10,12 +10,13 @@
     "mocha": "~1.12.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -R spec"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/craveprogramminginc/GeoJSON-Validation.git"
   },
+  "homepage" : "https://github.com/craveprogramminginc/GeoJSON-Validation",
   "keywords": [
     "GeoJSON",
     "Validation",
