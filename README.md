@@ -4,6 +4,9 @@ GeoJSON-Validation
 **A GeoJSON Validation Library**  
 Check JSON objects to see whether or not they are valid GeoJSON. Validation is based off of the [GeoJSON Format Specification revision 1.0](http://geojson.org/geojson-spec.html#geojson-objects)
 
+## Installation
+`npm install geojson-validation`
+
 ## Functions
 All Function return a boolean and take a JSON object that will be evalatued to see if it is a GeoJSON object.  
 
@@ -53,6 +56,62 @@ Checks if an object is a [Feature Collection Object](http://geojson.org/geojson-
 
 ### isBbox(geoJSON, callback)
 Checks if an object is a [Bounding Box](http://geojson.org/geojson-spec.html#bounding-boxes)
+
+## Example
+```javascript
+gjVal = require("geojson-validation");
+
+var validFeatureCollection = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
+            "properties": {"prop0": "value0"}
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
+                ]
+            },
+            "properties": {
+                "prop0": "value0",
+                "prop1": 0.0
+            }
+        }
+    ]
+};
+
+//simple test
+if(gjVal.valid(validFeatureCollection)){
+    console.log("this is valid GeoJSON!");
+}
+
+var invalidFeature =  {
+    "type": "feature",
+    "geometry": {
+        "type": "LineString",
+        "coordinates": [
+            [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
+        ]
+    },
+    "properties": {
+        "prop0": "value0",
+        "prop1": 0.0
+    }
+};
+
+//test to see if `invalidFeature` is valid
+gjVal.isFeature(invalidFeature, function(valid, errs){
+    //log the errors
+    if(!valid){
+    console.log(errs);
+    }
+});
+```
 
 ## Testing
 To run tests `npm test`   
