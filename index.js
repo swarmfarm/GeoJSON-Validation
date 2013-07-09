@@ -575,4 +575,4 @@
        return exports.isGeoJSONObject(object, cb); 
     };
 
-})(typeof exports === 'undefined'? this['mymodule']={}: exports);
+})(typeof exports === 'undefined'? this['geoJSON-validation']={}: exports);
