@@ -4,12 +4,15 @@ GeoJSON-Validation
 A GeoJSON Validation Library
 
 ## Functions
-* valid
-  returns bool
-isPosition
-isGeoJSONObject
-isGeometryObject
-isPoint
+### valid(geoJSON, callback)  
+
+### isPosition(geoJSON, callback)
+
+### isGeoJSONObject(geoJSON, callback)
+
+### isGeometryObject(geoJSON, callback)
+
+### isPoint(geoJSON, callback)
 isMultiPoint
 isLineString
 isMultiLineString
