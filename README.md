@@ -5,12 +5,12 @@ A GeoJSON Validation Library
 
 ## Functions
 * All Function return a boolean
-*Arguments*
+**Arguments**  
 * geoJSON - a JSON object that is tested to see if it is a valid geoJSON object
 * callback()
 
 ### valid(geoJON, callback)  
-*Alias:* isGeoJSONObject   
+**Alias:** isGeoJSONObject   
 
 ### isGeoJSONObject(geoJSON, callback)
 
