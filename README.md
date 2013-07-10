@@ -118,6 +118,6 @@ To run tests `npm test`
 Test use mocha
 
 ## Cavets
-* Does not check ordering ob Bouding Box coordinates
+* Does not check ordering of Bouding Box coordinates
 * Does not check Coordinate Reference System Objects
 * Does not check order of rings for polygons with multiple rings
