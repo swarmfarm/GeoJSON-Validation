@@ -54,7 +54,7 @@ Checks if an object is a [Feature Object](http://geojson.org/geojson-spec.html#f
 ### isFeatureCollection(geoJSON, callback)
 Checks if an object is a [Feature Collection Object](http://geojson.org/geojson-spec.html#feature-collection-objects)
 
-### isBbox(geoJSON, callback)
+### isBbox(array, callback)
 Checks if an object is a [Bounding Box](http://geojson.org/geojson-spec.html#bounding-boxes)
 
 ## Example
