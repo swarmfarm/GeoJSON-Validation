@@ -1,6 +1,6 @@
 {
   "name": "geojson-validation",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A GeoJSON Validation Library",
   "main": "index.js",
   "directories": {
