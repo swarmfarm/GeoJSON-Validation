@@ -8,7 +8,7 @@ Check JSON objects to see whether or not they are valid GeoJSON. Validation is b
 `npm install geojson-validation`
 
 ## Functions
-All Function return a boolean and take a JSON object that will be evalatued to see if it is a GeoJSON object, with the exception of `define`.  
+All Function return a boolean and take a JSON object that will be evalatued to see if it is a GeoJSON object, with the exception of [define](#definetype-function).  
 
 **Arguments**  
 * geoJSON - a JSON object that is tested to see if it is a valid GeoJSON object
@@ -58,8 +58,9 @@ Checks if an object is a [Feature Collection Object](http://geojson.org/geojson-
 Checks if an object is a [Bounding Box](http://geojson.org/geojson-spec.html#bounding-boxes)
 
 ### Define(type, function)
-Define a Custom Validation for the give `type`. Type can "Feature", "FeatureCollection", "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Bbox", "Position", "GeoJSON", "GeometryObject". 
-The `function` is passed the `object` being validated and should return a `string` or an `array` of  strings repesenting errors. If there are no errors then the function should not return anything or an empty array. See the [example](#define-example) for more.
+Define a Custom Validation for the give `type`. `type` can be "Feature", "FeatureCollection", "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Bbox", "Position", "GeoJSON" or "GeometryObject". 
+
+The `function` is passed the `object` being validated and should return a `string` or an `array` of  strings representing errors. If there are no errors then the function should not return anything or an empty array. See the [example](#define-example) for more.
 
 ## Example
 ```javascript
@@ -118,14 +119,11 @@ GJV.isFeature(invalidFeature, function(valid, errs){
 ```
 
 ## Define Example
-
-Shout out to @VitoLau for the code
+Shout out to [@VitoLau](https://github.com/VitoLau>) for the code! Thanks!
 ```javascript
 GJV = require("geojson-validation");
 
 GJV.define("Position", function(position){
-
-    //Shout out to @VitoLau <https://github.com/VitoLau> for the code
     //the postion must be valid point on the earth, x between -180 and 180
     errors = [];
     if(position[0] < -180 || position[0] > 180){
@@ -139,7 +137,8 @@ GJV.define("Position", function(position){
 });
 
 gj = {type: "Point", coordinates: [-200,3]};
-
+//returns false
+GJV.isPoint(gj);
 ```
 
 ## Testing
