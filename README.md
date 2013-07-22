@@ -21,26 +21,41 @@ Checks if an object is a [GeoJSON Object](http://geojson.org/geojson-spec.html#g
 ### isGeoJSONObject(geoJSON, callback)
 Checks if an object is a [GeoJSON Object](http://geojson.org/geojson-spec.html#geojson-objects).
 
-### isPosition(array, callback)
-Checks if an array is a [Position](http://geojson.org/geojson-spec.html#positions)
-
 ### isGeometryObject(geoJSON, callback)
 Checks if an object is a [Geometry Object](http://geojson.org/geojson-spec.html#geometry-objects)
+
+### isPosition(array, callback)
+Checks if an array is a [Position](http://geojson.org/geojson-spec.html#positions)
 
 ### isPoint(geoJSON, callback)
 Checks if an object is a [Point](http://geojson.org/geojson-spec.html#point)
 
+### isMultiPointCoor(array, callback)
+Checks if an array can be interperted as coordinates for a MultiPoint
+
 ### isMultiPoint(geoJSON, callback)
 Checks if an object is a [MultiPoint](http://geojson.org/geojson-spec.html#multipoint)
+
+### isLineStringCoor(array, callback)
+Checks if an array can be interperted as coordinates for a LineString
 
 ### isLineString(geoJSON, callback)
 Checks if an object is a [Line String](http://geojson.org/geojson-spec.html#linestring)
 
+### isMultiLineStringCoor(array, callback)
+Checks if an array can be interperted as coordinates for a MultiLineString
+
 ### isMultiLineString(geoJSON, callback)
 Checks if an object is a [MultiLine String](http://geojson.org/geojson-spec.html#multilinestring)
 
+### isPolygonCoor(array, callback)
+Checks an array can be interperted as coordinates for a Polygon
+
 ### isPolygon(geoJSON, callback)
 Checks if an object is a [Polygon](http://geojson.org/geojson-spec.html#polygon)
+
+### isMultiPolygonCoor(array, callback)
+Checks if an array can be interperted as coordinates for a MultiPolygon
 
 ### isMultiPolygon(geoJSON, callback)
 Checks if an object is a [MultiPolygon](http://geojson.org/geojson-spec.html#multipolygon)
