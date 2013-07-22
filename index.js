@@ -100,7 +100,7 @@
     /**
      * Determines if an object is a position or not
      * @method isPosition 
-     * @param position {Object}
+     * @param position {Array}
      * @param [cb] {Function} the callback
      * @return {Boolean}
      */
@@ -220,6 +220,34 @@
     };
 
     /**
+     * Determines if an array can be interperted as coordinates for a MultiPoint
+     * @method isMultiPointCoor
+     * @param coordinates {Array}
+     * @param [cb] {Function} the callback
+     * @return {Boolean}
+     */
+    exports.isMultiPointCoor = function(coordinates, cb) {
+
+        var errors = [];
+
+        if(Array.isArray(coordinates)){
+            coordinates.forEach(function(val, index){
+                exports.isPosition(val, function(valid, err){
+                    if(!valid){
+                        //modify the err msg from "isPosition" to note the element number
+                        err[0] = "at "+ index+ ": ".concat(err[0]);
+                        //build a list of invalide positions
+                        errors = errors.concat(err);
+                    }
+                });
+            });
+        }else{
+            errors.push("coordinates must be an array");
+        }
+
+        return _done(cb, errors);
+    }
+    /**
      * Determines if an object is a MultiPoint or not
      * @method isMultiPoint
      * @param position {Object}
@@ -246,20 +274,11 @@
         }
 
         if('coordinates' in multiPoint){
-            if(Array.isArray(multiPoint.coordinates)){
-                multiPoint.coordinates.forEach(function(val, index){
-                    exports.isPosition(val, function(valid, err){
-                        if(!valid){
-                            //modify the err msg from "isPosition" to note the element number
-                            err[0] = "at "+ index+ ": ".concat(err[0]);
-                            //build a list of invalide positions
-                            errors = errors.concat(err);
-                        }
-                    });
-                });
-            }else{
-                errors.push("coordinates must be an array");
-            }
+            exports.isMultiPointCoor(multiPoint.coordinates, function(valid, err){
+                if(!valid){
+                    errors =  errors.concat(err);
+                }
+            });
         }else{
             errors.push("must have a member with the name 'coordinates'");
         }
@@ -271,14 +290,13 @@
     };
 
     /**
-     * Determines if an object is a MultiPoint or not
-     * @method _lineStringCoor
-     * @private
-     * @param coordinates {Object}
+     * Determines if an array can be interperted as coordinates for a lineString
+     * @method isLineStringCoor
+     * @param coordinates {Array}
      * @param [cb] {Function} the callback
      * @return {Boolean}
      */
-    function _lineStringCoor(coordinates, cb) {
+    exports.isLineStringCoor = function(coordinates, cb) {
 
         var errors = [];
         if(Array.isArray(coordinates)){
@@ -331,7 +349,7 @@
         }
 
         if('coordinates' in lineString){
-            _lineStringCoor(lineString.coordinates,  function(valid, err){
+            exports.isLineStringCoor(lineString.coordinates, function(valid, err){
                 if(!valid){
                     errors =  errors.concat(err);
                 }
@@ -345,6 +363,32 @@
 
         return _done(cb, errors);
     };
+
+    /**
+     * Determines if an array can be interperted as coordinates for a MultiLineString
+     * @method isMultiLineStringCoor
+     * @param coordinates {Array}
+     * @param [cb] {Function} the callback
+     * @return {Boolean}
+     */
+    exports.isMultiLineStringCoor = function(coordinates, cb) {
+        var errors = [];
+        if(Array.isArray(coordinates)){
+            coordinates.forEach(function(val, index){
+                exports.isLineStringCoor(val, function(valid, err){
+                    if(!valid){
+                        //modify the err msg from "isPosition" to note the element number
+                        err[0] = "at "+ index+ ": ".concat(err[0]);
+                        //build a list of invalide positions
+                        errors = errors.concat(err);
+                    }
+                });
+            });
+        }else{
+            errors.push("coordinates must be an array");
+        }
+        _done(cb, errors);
+    }
 
     /**
      * Determines if an object is a MultiLine String or not
@@ -374,20 +418,11 @@
         }
 
         if('coordinates' in multilineString){
-            if(Array.isArray(multilineString.coordinates)){
-                multilineString.coordinates.forEach(function(val, index){
-                    _lineStringCoor(val, function(valid, err){
-                        if(!valid){
-                            //modify the err msg from "isPosition" to note the element number
-                            err[0] = "at "+ index+ ": ".concat(err[0]);
-                            //build a list of invalide positions
-                            errors = errors.concat(err);
-                        }
-                    });
-                });
-            }else{
-                errors.push("coordinates must be an array");
-            }
+            exports.isMultiLineStringCoor(multilineString.coordinates, function(valid, err){
+                if(!valid){
+                    errors = errors.concat(err);
+                }
+            });
         }else{
             errors.push("must have a member with the name 'coordinates'");
         }
@@ -447,7 +482,7 @@
      * @param [cb] {Function} the callback
      * @return {Boolean}
      */
-    function _polygonCoor(coordinates, cb){
+    exports.isPolygonCoor = function (coordinates, cb){
 
         var errors = [];
         if(Array.isArray(coordinates)){
@@ -496,7 +531,7 @@
         }
 
         if('coordinates' in polygon){
-            _polygonCoor(polygon.coordinates, function(valid, err) {
+            exports.isPolygonCoor(polygon.coordinates, function(valid, err) {
                 if(!valid){
                     errors = errors.concat(err);
                 }
@@ -510,6 +545,33 @@
 
         return _done(cb, errors);
     };
+
+    /**
+     * Determines if an array can be interperted as coordinates for a MultiPolygon
+     * @method isMultiPolygonCoor
+     * @param coordinates {Array}
+     * @param [cb] {Function} the callback
+     * @return {Boolean}
+     */
+    exports.isMultiPolygonCoor = function(coordinates, cb) {
+        var errors = [];
+        if(Array.isArray(coordinates)){
+            coordinates.forEach(function(val, index){
+                exports.isPolygonCoor(val, function(valid, err){
+                    if(!valid){
+                        //modify the err msg from "isPosition" to note the element number
+                        err[0] = "at "+ index+ ": ".concat(err[0]);
+                        //build a list of invalide positions
+                        errors = errors.concat(err);
+                    }
+                });
+            });
+        }else{
+            errors.push("coordinates must be an array");
+        }
+
+        _done(cb, errors);
+    }
 
     /**
      * Determines if an object is a valid MultiPolygon
@@ -539,20 +601,11 @@
         }
 
         if('coordinates' in multiPolygon){
-            if(Array.isArray(multiPolygon.coordinates)){
-                multiPolygon.coordinates.forEach(function(val, index){
-                    _polygonCoor(val, function(valid, err){
-                        if(!valid){
-                            //modify the err msg from "isPosition" to note the element number
-                            err[0] = "at "+ index+ ": ".concat(err[0]);
-                            //build a list of invalide positions
-                            errors = errors.concat(err);
-                        }
-                    });
-                });
-            }else{
-                errors.push("coordinates must be an array");
-            }
+            exports.isMultiPolygonCoor(multiPolygon.coordinates, function(valid, err){
+                if(!valid){
+                    errors = errors.concat(err);
+                }
+            });
         }else{
             errors.push("must have a member with the name 'coordinates'");
         }
