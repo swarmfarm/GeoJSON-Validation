@@ -54,7 +54,7 @@ Checks if an object is a [Feature Object](http://geojson.org/geojson-spec.html#f
 ### isFeatureCollection(geoJSON, callback)
 Checks if an object is a [Feature Collection Object](http://geojson.org/geojson-spec.html#feature-collection-objects)
 
-### isBbox(geoJSON, callback)
+### isBbox(array, callback)
 Checks if an object is a [Bounding Box](http://geojson.org/geojson-spec.html#bounding-boxes)
 
 ### Define(type, function)
@@ -147,6 +147,6 @@ To run tests `npm test`
 Test use mocha
 
 ## Cavets
-* Does not check ordering ob Bouding Box coordinates
+* Does not check ordering of Bouding Box coordinates
 * Does not check Coordinate Reference System Objects
 * Does not check order of rings for polygons with multiple rings
