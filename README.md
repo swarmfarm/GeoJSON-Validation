@@ -58,7 +58,7 @@ Checks if an object is a [Feature Collection Object](http://geojson.org/geojson-
 Checks if an object is a [Bounding Box](http://geojson.org/geojson-spec.html#bounding-boxes)
 
 ### Define(type, function)
-Define a Custom Validation for the give `type`. Type can "Feature", "FeatureCollection", "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Bbox", "Position", "GeoJSON", "GeometryObject". 
+Define a Custom Validation for the give `type`. `type` can be "Feature", "FeatureCollection", "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Bbox", "Position", "GeoJSON", "GeometryObject". 
 
 The `function` is passed the `object` being validated and should return a `string` or an `array` of  strings representing errors. If there are no errors then the function should not return anything or an empty array. See the [example](#define-example) for more.
 
