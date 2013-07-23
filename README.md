@@ -21,17 +21,17 @@ Checks if an object is a [GeoJSON Object](http://geojson.org/geojson-spec.html#g
 ### isGeoJSONObject(geoJSON, callback)
 Checks if an object is a [GeoJSON Object](http://geojson.org/geojson-spec.html#geojson-objects).
 
-### isPosition(array, callback)
-Checks if an array is a [Position](http://geojson.org/geojson-spec.html#positions)
-
 ### isGeometryObject(geoJSON, callback)
 Checks if an object is a [Geometry Object](http://geojson.org/geojson-spec.html#geometry-objects)
+
+### isPosition(array, callback)
+Checks if an array is a [Position](http://geojson.org/geojson-spec.html#positions)
 
 ### isPoint(geoJSON, callback)
 Checks if an object is a [Point](http://geojson.org/geojson-spec.html#point)
 
 ### isMultiPointCoor(array, callback)
-Checks an array can be interperted as coordinates for a MultiPoint
+Checks if an array can be interperted as coordinates for a MultiPoint
 
 ### isMultiPoint(geoJSON, callback)
 Checks if an object is a [MultiPoint](http://geojson.org/geojson-spec.html#multipoint)
