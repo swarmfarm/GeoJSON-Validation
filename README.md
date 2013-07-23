@@ -119,7 +119,6 @@ GJV.isFeature(invalidFeature, function(valid, errs){
 ```
 
 ## Define Example
-
 Shout out to [@VitoLau](https://github.com/VitoLau>) for the code! Thanks!
 ```javascript
 GJV = require("geojson-validation");
@@ -138,7 +137,8 @@ GJV.define("Position", function(position){
 });
 
 gj = {type: "Point", coordinates: [-200,3]};
-
+//returns false
+GJV.isPoint(gj);
 ```
 
 ## Testing
