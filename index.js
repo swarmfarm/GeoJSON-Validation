@@ -11,13 +11,22 @@
 
     /**
      * Test an object to see if it is a function
-     * @method _isFunction 
-     * @private
+     * @method isFunction 
      * @param object {Object}
      * @return {Boolean}
      */
-    function _isFunction(object) {
+    function isFunction(object) {
         return typeof(object) == 'function';
+    }
+    
+    /**
+     * A truthy test for objects
+     * @method isObject
+     * @param {Object}
+     * @return {Boolean}
+     */
+    function isObject(object) {
+        return object === Object(object);
     }
 
     /**
@@ -42,7 +51,7 @@
             valid = true;
         }
 
-        if( _isFunction(cb)){
+        if( isFunction(cb)){
             if(valid){
                 cb(valid, []);
             }else{
@@ -65,7 +74,7 @@
 
         var errors;
 
-        if(_isFunction(definitions[type])){
+        if(isFunction(definitions[type])){
             try{
                 errors = definitions[type](object);
             }catch(e){
@@ -89,7 +98,7 @@
      * @return {Boolean} Return true if the function was loaded corectly else false
      */
     exports.define = function(type, definition){
-        if((type in all_types) && _isFunction(definition)){
+        if((type in all_types) && isFunction(definition)){
             //TODO: check to see if the type is valid
             definitions[type] = definition;
             return true;
@@ -133,13 +142,16 @@
      */
     exports.isGeoJSONObject = exports.valid = function(geoJSONObject, cb){
 
-        var errors = [];
+        if(!isObject(geoJSONObject)){
+            return _done(cb, ['must be a JSON Object']);
+        }
 
+        var errors = [];
         if('type' in geoJSONObject){
             if(non_geo_types[geoJSONObject.type]){
-                return non_geo_types[geoJSONObject.type](geoJSONObject, cb)
+                return non_geo_types[geoJSONObject.type](geoJSONObject, cb);
             }else if(geo_types[geoJSONObject.type]){
-                return geo_types[geoJSONObject.type](geoJSONObject, cb)
+                return geo_types[geoJSONObject.type](geoJSONObject, cb);
             }else{
                 errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"');
             }
@@ -160,11 +172,16 @@
      * @return {Boolean}
      */
     exports.isGeometryObject = function(geometryObject, cb){
+
+        if(!isObject(geometryObject)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('type' in geometryObject){
             if(geo_types[geometryObject.type]){
-                return geo_types[geometryObject.type](geometryObject, cb)
+                return geo_types[geometryObject.type](geometryObject, cb);
             }else{
                 errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"');
             }
@@ -185,6 +202,11 @@
      * @return {Boolean}
      */
     exports.isPoint = function(point, cb) {
+
+        if(!isObject(point)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('bbox' in point){
@@ -246,7 +268,7 @@
         }
 
         return _done(cb, errors);
-    }
+    };
     /**
      * Determines if an object is a MultiPoint or not
      * @method isMultiPoint
@@ -255,6 +277,11 @@
      * @return {Boolean}
      */
     exports.isMultiPoint = function(multiPoint, cb) {
+
+        if(!isObject(multiPoint)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('bbox' in multiPoint){
@@ -319,7 +346,7 @@
         }
 
         return _done(cb, errors);
-    }
+    };
 
     /**
      * Determines if an object is a lineString or not
@@ -329,6 +356,10 @@
      * @return {Boolean}
      */
     exports.isLineString = function(lineString, cb){
+
+        if(!isObject(lineString)){
+            return _done(cb, ['must be a JSON Object']);
+        }
 
         var errors = [];
 
@@ -388,7 +419,7 @@
             errors.push("coordinates must be an array");
         }
         _done(cb, errors);
-    }
+    };
 
     /**
      * Determines if an object is a MultiLine String or not
@@ -398,6 +429,10 @@
      * @return {Boolean}
      */
     exports.isMultiLineString = function(multilineString, cb){
+
+        if(!isObject(multilineString)){
+            return _done(cb, ['must be a JSON Object']);
+        }
 
         var errors = [];
 
@@ -501,7 +536,7 @@
         }
 
         return _done(cb, errors);
-    }
+    };
 
     /**
      * Determines if an object is a valid Polygon
@@ -511,6 +546,10 @@
      * @return {Boolean}
      */
     exports.isPolygon = function(polygon, cb){
+
+        if(!isObject(polygon)){
+            return _done(cb, ['must be a JSON Object']);
+        }
 
         var errors = [];
 
@@ -571,7 +610,7 @@
         }
 
         _done(cb, errors);
-    }
+    };
 
     /**
      * Determines if an object is a valid MultiPolygon
@@ -581,6 +620,10 @@
      * @return {Boolean}
      */
     exports.isMultiPolygon = function(multiPolygon, cb){
+
+        if(!isObject(multiPolygon)){
+            return _done(cb, ['must be a JSON Object']);
+        }
 
         var errors = [];
 
@@ -624,6 +667,11 @@
      * @return {Boolean}
      */
     exports.isGeometryCollection = function(geometryCollection, cb){
+
+        if(!isObject(geometryCollection)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('bbox' in geometryCollection){
@@ -676,6 +724,10 @@
      */
     exports.isFeature = function(feature, cb){
 
+        if(!isObject(feature)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('bbox' in feature){
@@ -725,6 +777,10 @@
      */
     exports.isFeatureCollection = function(featureCollection, cb){
 
+        if(!isObject(featureCollection)){
+            return _done(cb, ['must be a JSON Object']);
+        }
+
         var errors = [];
 
         if('bbox' in featureCollection){
@@ -742,7 +798,6 @@
         }else{
             errors.push("must have a member with the name 'type'");
         }
-
 
         if('features' in featureCollection){
             if(Array.isArray(featureCollection.features)){
