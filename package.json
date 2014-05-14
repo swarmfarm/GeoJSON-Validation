@@ -26,8 +26,5 @@
     "Geo"
   ],
   "author": "null_radix <null_radix@riseup.net>",
-  "license": "LGPL-3",
-  "dependencies": {
-    "minimist": "~0.1.0"
-  }
+  "license": "LGPL-3"
 }
