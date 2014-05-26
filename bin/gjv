@@ -4,7 +4,7 @@ var GJV = require('../'),
   fs = require('fs'),
   filenames  = process.argv.splice(2);
 
-if (filenames) {
+if (filenames.length) {
   filenames.forEach(function(filename){
     var file;
     try{
