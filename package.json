@@ -23,7 +23,8 @@
   "keywords": [
     "GeoJSON",
     "Validation",
-    "Geo"
+    "Geo",
+    "cli"
   ],
   "author": "null_radix <null_radix@riseup.net>",
   "license": "LGPL-3"
