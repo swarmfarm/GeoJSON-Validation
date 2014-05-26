@@ -9,7 +9,7 @@ Check JSON objects to see whether or not they are valid GeoJSON. Validation is b
 
 ## usage
 ```javascript
-GJV = require("geojson-validation");
+var GJV = require("geojson-validation");
 
 var validFeatureCollection = {
     "type": "FeatureCollection",
