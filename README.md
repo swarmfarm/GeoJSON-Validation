@@ -4,6 +4,13 @@ GeoJSON-Validation
 **A GeoJSON Validation Library**  
 Check JSON objects to see whether or not they are valid GeoJSON. Validation is based off of the [GeoJSON Format Specification revision 1.0](http://geojson.org/geojson-spec.html#geojson-objects)
 
+- [Installation](#installation)
+- [usage](#usage)
+- [usage](#cli-usage)
+- [api](#api)
+- [testing](#testing)
+- [Cavets](#Cavets)
+
 ## Installation
 `npm install geojson-validation`
 
@@ -63,6 +70,14 @@ GJV.isFeature(invalidFeature, function(valid, errs){
 });
 ```
 
+## CLI usage
+first install gobally   
+`npm install geojson-validation -g`   
+Then you can use `gjv` to validate file such as   
+`gjv file1 file2..`   
+Or you can stream files to it
+`cat file | gjv`  
+`gjv` will either return a list of error or a `valid` if the files are indeed valid.
 
 ## API
 All Function return a `boolean` and take a JSON object that will be evalatued to see if it is a GeoJSON object, with the exception of [define](#definetype-function).  
@@ -192,7 +207,7 @@ The `function` is passed the `object` being validated and should return a `strin
 --------------------------------------------------------
 
 ## Define Example
-Shout out to [@VitoLau](https://github.com/VitoLau>) for the code! Thanks!
+Shout out to [@VitoLau](https://github.com/VitoLau>) for the code for this example.
 ```javascript
 GJV = require("geojson-validation");
 
