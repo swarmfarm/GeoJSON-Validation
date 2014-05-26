@@ -9,7 +9,7 @@ Check JSON objects to see whether or not they are valid GeoJSON. Validation is b
 - [usage](#cli-usage)
 - [api](#api)
 - [testing](#testing)
-- [Cavets](#Cavets)
+- [Cavets](#cavets)
 
 ## Installation
 `npm install geojson-validation`
