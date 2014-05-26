@@ -58,18 +58,18 @@ var invalidFeature =  {
 GJV.isFeature(invalidFeature, function(valid, errs){
     //log the errors
     if(!valid){
-    console.log(errs);
+       console.log(errs);
     }
 });
 ```
 
 
 ## API
-All Function return a boolean and take a JSON object that will be evalatued to see if it is a GeoJSON object, with the exception of [define](#definetype-function).  
+All Function return a `boolean` and take a JSON object that will be evalatued to see if it is a GeoJSON object, with the exception of [define](#definetype-function).  
 
 **Arguments**  
 * geoJSON - a JSON object that is tested to see if it is a valid GeoJSON object
-* callback(boolean, errors) - `errors` is an array of validation errors for an invalid JSON object 
+* callback(boolean, errors) - `boolean` is whether or not the object is valid. `errors` is an array of validation errors for an invalid JSON object.
 
 ### valid(geoJSON, callback)  
 **Alias:** isGeoJSONObject  
