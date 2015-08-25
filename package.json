@@ -1,6 +1,6 @@
 {
   "name": "geojson-validation",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A GeoJSON Validation Library",
   "main": "index.js",
   "directories": {
@@ -26,6 +26,6 @@
     "Geo",
     "cli"
   ],
-  "author": "null_radix <null_radix@riseup.net>",
+  "author": "mjbecze <mjbecze@gmail.com>"
   "license": "LGPL-3"
 }
