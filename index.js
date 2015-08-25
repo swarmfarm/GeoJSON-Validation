@@ -121,10 +121,10 @@
         if(Array.isArray(position)){
             //and the array must have more than one element
             if(position.length <= 1){
-                errors.push("Postition must be at least two elements");
+                errors.push("Position must be at least two elements");
             }
         }else{
-            errors.push("Postition must be an array");
+            errors.push("Position must be an array");
         }
 
         //run custom checks
