@@ -728,7 +728,7 @@ exports.isFeature = function (feature, cb) {
 
   if ('type' in feature) {
     if (feature.type !== 'Feature') {
-      errors.push('type must be "feature"')
+      errors.push('type must be "Feature"')
     }
   } else {
     errors.push('must have a member with the name "type"')
@@ -799,10 +799,10 @@ exports.isFeatureCollection = function (featureCollection, cb) {
         })
       })
     } else {
-      errors.push('"features" must be an array')
+      errors.push('"Features" must be an array')
     }
   } else {
-    errors.push('must have a member with the name "features"')
+    errors.push('must have a member with the name "Features"')
   }
 
   // run custom checks
