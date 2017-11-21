@@ -119,6 +119,12 @@ exports.isPosition = function (position, cb) {
     if (position.length <= 1) {
       errors.push('Position must be at least two elements')
     }
+
+    position.forEach((pos, index) => {
+      if (typeof pos !== 'number') {
+        errors.push(`Position must only contain numbers. Item ${pos} at index ${index} is invalid.`)
+      }
+    })
   } else {
     errors.push('Position must be an array')
   }
