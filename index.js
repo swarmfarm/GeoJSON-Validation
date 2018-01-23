@@ -36,7 +36,7 @@ function isObject (object) {
  * @return {Boolean} is the object valid or not?
  */
 function _done (cb, message) {
-  let valid = false
+  var valid = false
 
   if (typeof message === 'string') {
     message = [message]
@@ -68,13 +68,13 @@ function _done (cb, message) {
  * @return {Array} an array of errors
  */
 function _customDefinitions (type, object) {
-  let errors
+  var errors
 
   if (isFunction(definitions[type])) {
     try {
       errors = definitions[type](object)
     } catch (e) {
-      errors = [`Problem with custom definition for ${type}: ${e}`]
+      errors = ['Problem with custom definition for '+type+': '+e]
     }
     if (typeof result === 'string') {
       errors = [errors]
@@ -111,7 +111,7 @@ exports.define = function (type, definition) {
  * @return {Boolean}
  */
 exports.isPosition = function (position, cb) {
-  let errors = []
+  var errors = []
 
   // It must be an array
   if (Array.isArray(position)) {
@@ -120,9 +120,9 @@ exports.isPosition = function (position, cb) {
       errors.push('Position must be at least two elements')
     }
 
-    position.forEach((pos, index) => {
+    position.forEach(function(pos, index) {
       if (typeof pos !== 'number') {
-        errors.push(`Position must only contain numbers. Item ${pos} at index ${index} is invalid.`)
+        errors.push('Position must only contain numbers. Item '+pos+' at index '+index+' is invalid.')
       }
     })
   } else {
@@ -146,7 +146,7 @@ exports.isGeoJSONObject = exports.valid = function (geoJSONObject, cb) {
   if (!isObject(geoJSONObject)) {
     return _done(cb, ['must be a JSON Object'])
   } else {
-    let errors = []
+    var errors = []
     if ('type' in geoJSONObject) {
       if (nonGeoTypes[geoJSONObject.type]) {
         return nonGeoTypes[geoJSONObject.type](geoJSONObject, cb)
@@ -177,7 +177,7 @@ exports.isGeometryObject = function (geometryObject, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('type' in geometryObject) {
     if (geoTypes[geometryObject.type]) {
@@ -206,7 +206,7 @@ exports.isPoint = function (point, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in point) {
     exports.isBbox(point.bbox, function (valid, err) {
@@ -248,7 +248,7 @@ exports.isPoint = function (point, cb) {
  * @return {Boolean}
  */
 exports.isMultiPointCoor = function (coordinates, cb) {
-  let errors = []
+  var errors = []
 
   if (Array.isArray(coordinates)) {
     coordinates.forEach(function (val, index) {
@@ -279,7 +279,7 @@ exports.isMultiPoint = function (multiPoint, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in multiPoint) {
     exports.isBbox(multiPoint.bbox, function (valid, err) {
@@ -321,7 +321,7 @@ exports.isMultiPoint = function (multiPoint, cb) {
  * @return {Boolean}
  */
 exports.isLineStringCoor = function (coordinates, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(coordinates)) {
     if (coordinates.length > 1) {
       coordinates.forEach(function (val, index) {
@@ -356,7 +356,7 @@ exports.isLineString = function (lineString, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in lineString) {
     exports.isBbox(lineString.bbox, function (valid, err) {
@@ -398,7 +398,7 @@ exports.isLineString = function (lineString, cb) {
  * @return {Boolean}
  */
 exports.isMultiLineStringCoor = function (coordinates, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(coordinates)) {
     coordinates.forEach(function (val, index) {
       exports.isLineStringCoor(val, function (valid, err) {
@@ -428,7 +428,7 @@ exports.isMultiLineString = function (multilineString, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in multilineString) {
     exports.isBbox(multilineString.bbox, function (valid, err) {
@@ -471,7 +471,7 @@ exports.isMultiLineString = function (multilineString, cb) {
  * @return {Boolean}
  */
 function _linearRingCoor (coordinates, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(coordinates)) {
     // 4 or more positions
 
@@ -511,7 +511,7 @@ function _linearRingCoor (coordinates, cb) {
  * @return {Boolean}
  */
 exports.isPolygonCoor = function (coordinates, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(coordinates)) {
     coordinates.forEach(function (val, index) {
       _linearRingCoor(val, function (valid, err) {
@@ -542,7 +542,7 @@ exports.isPolygon = function (polygon, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in polygon) {
     exports.isBbox(polygon.bbox, function (valid, err) {
@@ -584,7 +584,7 @@ exports.isPolygon = function (polygon, cb) {
  * @return {Boolean}
  */
 exports.isMultiPolygonCoor = function (coordinates, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(coordinates)) {
     coordinates.forEach(function (val, index) {
       exports.isPolygonCoor(val, function (valid, err) {
@@ -615,7 +615,7 @@ exports.isMultiPolygon = function (multiPolygon, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in multiPolygon) {
     exports.isBbox(multiPolygon.bbox, function (valid, err) {
@@ -661,7 +661,7 @@ exports.isGeometryCollection = function (geometryCollection, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in geometryCollection) {
     exports.isBbox(geometryCollection.bbox, function (valid, err) {
@@ -716,7 +716,7 @@ exports.isFeature = function (feature, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in feature) {
     exports.isBbox(feature.bbox, function (valid, err) {
@@ -768,7 +768,7 @@ exports.isFeatureCollection = function (featureCollection, cb) {
     return _done(cb, ['must be a JSON Object'])
   }
 
-  let errors = []
+  var errors = []
 
   if ('bbox' in featureCollection) {
     exports.isBbox(featureCollection.bbox, function (valid, err) {
@@ -819,7 +819,7 @@ exports.isFeatureCollection = function (featureCollection, cb) {
  * @return {Boolean}
  */
 exports.isBbox = function (bbox, cb) {
-  let errors = []
+  var errors = []
   if (Array.isArray(bbox)) {
     if (bbox.length % 2 !== 0) {
       errors.push('bbox, must be a 2*n array')
