@@ -219,7 +219,7 @@ exports.isPoint = (point, trace = false) => {
   if ('coordinates' in point) {
     const t = exports.isPosition(point.coordinates, true)
     if (t.length) {
-      errors.push('Coordinates must be a single position')
+	errors = errors.concat(t)
     }
   } else {
     errors.push('must have a member with the name "coordinates"')
@@ -227,7 +227,6 @@ exports.isPoint = (point, trace = false) => {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Point', point))
-
   return _done(trace, errors)
 }
 
