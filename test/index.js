@@ -1,37 +1,34 @@
 const assert = require('assert')
 const GSV = require('../index.js')
 
-describe('Positions', function () {
-
-  it('must be a valid position object', function () {
+describe('Positions', () => {
+  it('must be a valid position object', () => {
     assert(GSV.isPosition([2, 3]))
   })
 
-  it('must be a valid position object', function () {
+  it('must be a valid position object', () => {
     assert.equal(false, GSV.isPosition([null, null]))
   })
 
-  it('must be an array', function () {
+  it('must be an array', () => {
     assert.equal(false, GSV.isPosition("adf"))
   })
 
-  it('must be at least two elements', function () {
+  it('must be at least two elements', () => {
     assert.equal(false, GSV.isPosition([2]))
   })
 })
 
-describe("GeoJSON Objects", function () {
-
-  it('must have a member with the name "type"', function () {
+describe("GeoJSON Objects", () => {
+  it('must have a member with the name "type"', () => {
     gj = {
       "test": "1"
     }
     assert.equal(false, GSV.isGeoJSONObject(gj))
   })
 
-  describe("type member", function () {
-    it('must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"', function () {
-
+  describe("type member", () => {
+    it('must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"', () => {
       gj = {
         type: "point"
       }
@@ -39,11 +36,9 @@ describe("GeoJSON Objects", function () {
     })
   })
 
-  describe("Geometry Objects", function () {
-
-    describe("type member", function () {
-      it('must be one of "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", or "GeometryCollection"', function () {
-
+  describe("Geometry Objects", () => {
+    describe("type member", () => {
+      it('must be one of "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", or "GeometryCollection"', () => {
         gj = {
           type: "Feature"
         }
@@ -51,9 +46,8 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-
-    describe("Point", function () {
-      it('must be a valid Point Object', function () {
+    describe("Point", () => {
+      it('must be a valid Point Object', () => {
         gj = {
           type: "Point",
           coordinates: [2, 3]
@@ -61,7 +55,7 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isPoint(gj))
       })
 
-      it('member type must be "Point"', function () {
+      it('member type must be "Point"', () => {
         gj = {
           type: "Polygon",
           coordinates: [2, 3]
@@ -69,7 +63,7 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isPoint(gj))
       })
 
-      it('must have a member with the name "coordinates"', function () {
+      it('must have a member with the name "coordinates"', () => {
         gj = {
           type: "Point",
           coordinate: [2, 3]
@@ -77,8 +71,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isPoint(gj))
       })
 
-      describe("type coordinates", function () {
-        it('must be a single position', function () {
+      describe("type coordinates", () => {
+        it('must be a single position', () => {
           gj = {
             type: "Point",
             coordinates: [2]
@@ -88,8 +82,8 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-    describe("MultiPoint", function () {
-      it('must be a valid MultiPoint Object', function () {
+    describe("MultiPoint", () => {
+      it('must be a valid MultiPoint Object', () => {
         gj = {
           type: "MultiPoint",
           coordinates: [
@@ -100,7 +94,7 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isMultiPoint(gj))
       })
 
-      it('member type must be "MultiPoint"', function () {
+      it('member type must be "MultiPoint"', () => {
         gj = {
           type: "Point",
           coordinates: [
@@ -111,7 +105,7 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isMultiPoint(gj))
       })
 
-      it('must have a member with the name "coordinates"', function () {
+      it('must have a member with the name "coordinates"', () => {
         gj = {
           type: "MultiPoint",
           coordinate: [2, 3]
@@ -119,8 +113,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isPoint(gj))
       })
 
-      describe("type coordinates", function () {
-        it('must be an array of positions', function () {
+      describe("type coordinates", () => {
+        it('must be an array of positions', () => {
           gj = {
             type: "MultiPoint",
             coordinates: [
@@ -133,10 +127,10 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-    describe("Linestring", function () {
+    describe("Linestring", () => {
 
-      it('must be a valid LineString Object', function () {
-        var ValidLineString = {
+      it('must be a valid LineString Object', () => {
+        const ValidLineString = {
           "type": "LineString",
           "coordinates": [
             [102.0, 0.0],
@@ -148,7 +142,7 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isLineString(ValidLineString))
       })
 
-      it('member type must be "LineString"', function () {
+      it('member type must be "LineString"', () => {
         gj = {
           type: "lineString",
           coordinates: [
@@ -159,7 +153,7 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isLineString(gj))
       })
 
-      it('must have a member with the name "coordinates"', function () {
+      it('must have a member with the name "coordinates"', () => {
         gj = {
           type: "LineString",
           coordinate: [
@@ -172,8 +166,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isLineString(gj))
       })
 
-      describe("type coordinates", function () {
-        it('must be an array of positions', function () {
+      describe("type coordinates", () => {
+        it('must be an array of positions', () => {
           gj = {
             type: "LineString",
             coordinate: [
@@ -184,7 +178,7 @@ describe("GeoJSON Objects", function () {
           assert.equal(false, GSV.isLineString(gj))
         })
 
-        it('must be at least two elements', function () {
+        it('must be at least two elements', () => {
           gj = {
             type: "LineString",
             coordinates: [
@@ -196,10 +190,10 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-    describe("MutliLineString", function () {
+    describe("MutliLineString", () => {
 
-      it('must be a valid MutiLineString Object', function () {
-        var validMutlineString = {
+      it('must be a valid MutiLineString Object', () => {
+        const validMutlineString = {
           "type": "MultiLineString",
           "coordinates": [
             [
@@ -215,9 +209,9 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isMultiLineString(validMutlineString))
       })
 
-      it('member type must be "MutliLineString"', function () {
+      it('member type must be "MutliLineString"', () => {
 
-        var invalidMutlineString = {
+        const invalidMutlineString = {
           "type": "multiLineString",
           "coordinates": [
             [
@@ -233,9 +227,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isMultiLineString(invalidMutlineString))
       })
 
-      it('must have a member with the name "coordinates"', function () {
-
-        var invalidMutlineString = {
+      it('must have a member with the name "coordinates"', () => {
+        const invalidMutlineString = {
           "type": "MultiLineString",
           "coordinate": [
             [
@@ -248,14 +241,13 @@ describe("GeoJSON Objects", function () {
             ]
           ]
         }
-
         assert.equal(false, GSV.isMultiLineString(invalidMutlineString))
       })
 
-      describe("type coordinates", function () {
-        it('must be an array of LineString coordinate arrays', function () {
+      describe("type coordinates", () => {
+        it('must be an array of LineString coordinate arrays', () => {
 
-          var invalidMutlineString = {
+          const invalidMutlineString = {
             "type": "MultiLineString",
             "coordinate": [
               [
@@ -268,15 +260,14 @@ describe("GeoJSON Objects", function () {
               ]
             ]
           }
-
           assert.equal(false, GSV.isMultiLineString(invalidMutlineString))
         })
       })
     })
 
-    describe('Polygon', function () {
-      it('must be a valid Polygon Object', function () {
-        var validPolygon = {
+    describe('Polygon', () => {
+      it('must be a valid Polygon Object', () => {
+        const validPolygon = {
           "type": "Polygon",
           "coordinates": [
             [
@@ -291,9 +282,8 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isPolygon(validPolygon))
       })
 
-      it('member type must be "Polygon"', function () {
-
-        var invalidPolygon = {
+      it('member type must be "Polygon"', () => {
+        const invalidPolygon = {
           "type": "polygon",
           "coordinates": [
             [
@@ -308,8 +298,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isPolygon(invalidPolygon))
       })
 
-      it('must have a member with the name "coordinates"', function () {
-        var invalidPolygon = {
+      it('must have a member with the name "coordinates"', () => {
+        const invalidPolygon = {
           "type": "Polygon",
           "coordinate": [
             [
@@ -324,18 +314,18 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isPolygon(invalidPolygon))
       })
 
-      describe("type coordinates", function () {
-        it('must be an array of LinearRing coordinate arrays', function () {
-          var invalidPolygon = {
+      describe("type coordinates", () => {
+        it('must be an array of LinearRing coordinate arrays', () => {
+          const invalidPolygon = {
             "type": "Polygon",
             "coordinates": "test"
           }
           assert.equal(false, GSV.isPolygon(invalidPolygon))
         })
 
-        describe('LinearRing', function () {
-          it('must be a LineString with 4 or more positions', function () {
-            var invalidPolygon = {
+        describe('LinearRing', () => {
+          it('must be a LineString with 4 or more positions', () => {
+            const invalidPolygon = {
               "type": "Polygon",
               "coordinates": [
                 [
@@ -355,8 +345,8 @@ describe("GeoJSON Objects", function () {
             assert.equal(false, GSV.isPolygon(invalidPolygon))
           })
 
-          it('The first and last positions must be equivalent (represent equivalent points)', function () {
-            var invalidPolygon = {
+          it('The first and last positions must be equivalent (represent equivalent points)', () => {
+            const invalidPolygon = {
               "type": "Polygon",
               "coordinates": [
                 [
@@ -369,16 +359,14 @@ describe("GeoJSON Objects", function () {
               ]
             }
             assert.equal(false, GSV.isPolygon(invalidPolygon))
-
           })
         })
       })
     })
 
-    describe('MultiPolygon', function () {
-
-      it('must be a valid MultiPolygon object', function () {
-        var validMultiPolygon = {
+    describe('MultiPolygon', () => {
+      it('must be a valid MultiPolygon object', () => {
+        const validMultiPolygon = {
           "type": "MultiPolygon",
           "coordinates": [
             [
@@ -411,9 +399,8 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isMultiPolygon(validMultiPolygon))
       })
 
-      it('member type must be "MultiPolygon"', function () {
-
-        var invalidMultiPolygon = {
+      it('member type must be "MultiPolygon"', () => {
+        const invalidMultiPolygon = {
           "type": "multiPolygon",
           "coordinates": [
             [
@@ -443,13 +430,11 @@ describe("GeoJSON Objects", function () {
             ]
           ]
         }
-
         assert.equal(false, GSV.isMultiPolygon(invalidMultiPolygon))
       })
 
-      it('must have a member with the name "coordinates"', function () {
-
-        var invalidMultiPolygon = {
+      it('must have a member with the name "coordinates"', () => {
+        const invalidMultiPolygon = {
           "type": "MultiPolygon",
           "coordinate": [
             [
@@ -483,10 +468,10 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isMultiPolygon(invalidMultiPolygon))
       })
 
-      describe("type coordinates", function () {
-        it('must be an array of Polygon coordinate arrays', function () {
+      describe("type coordinates", () => {
+        it('must be an array of Polygon coordinate arrays', () => {
 
-          var invalidMultiPolygon = {
+          const invalidMultiPolygon = {
             "type": "MultiPolygon",
             "coordinates": [
               [
@@ -522,10 +507,10 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-    describe('Geometry Collection', function () {
+    describe('Geometry Collection', () => {
 
-      it('must be a valid Geometry Collection Object', function () {
-        var validGeoCollection = {
+      it('must be a valid Geometry Collection Object', () => {
+        const validGeoCollection = {
           "type": "GeometryCollection",
           "geometries": [{
             "type": "Point",
@@ -541,8 +526,8 @@ describe("GeoJSON Objects", function () {
         assert(GSV.isGeometryCollection(validGeoCollection))
       })
 
-      it('member type must be "GeometryCollection"', function () {
-        var invalidGeoCollection = {
+      it('member type must be "GeometryCollection"', () => {
+        const invalidGeoCollection = {
           "type": "geometryCollection",
           "geometries": [{
             "type": "Point",
@@ -558,8 +543,8 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isGeometryCollection(invalidGeoCollection))
       })
 
-      it('must have a member with the name "geometries"', function () {
-        var invalidGeoCollection = {
+      it('must have a member with the name "geometries"', () => {
+        const invalidGeoCollection = {
           "type": "GeometryCollection",
           "geometrie": [{
             "type": "Point",
@@ -575,10 +560,10 @@ describe("GeoJSON Objects", function () {
         assert.equal(false, GSV.isGeometryCollection(invalidGeoCollection))
       })
 
-      describe('geometries', function () {
-        it('must be an array of GeoJSON geometry object', function () {
+      describe('geometries', () => {
+        it('must be an array of GeoJSON geometry object', () => {
 
-          var invalidGeoCollection = {
+          const invalidGeoCollection = {
             "type": "GeometryCollection",
             "geometries": [{
               "type": "Point",
@@ -598,11 +583,9 @@ describe("GeoJSON Objects", function () {
     })
   })
 
-  describe('Feature Objects', function () {
-
-
-    it('must be a valid Feature Object', function () {
-      var validFeature = {
+  describe('Feature Objects', () => {
+    it('must be a valid Feature Object', () => {
+      const validFeature = {
         "type": "Feature",
         "geometry": {
           "type": "LineString",
@@ -618,13 +601,11 @@ describe("GeoJSON Objects", function () {
           "prop1": 0.0
         }
       }
-
       assert(GSV.isFeature(validFeature))
     })
 
-    it('member type must be "Feature"', function () {
-
-      var invalidFeature = {
+    it('member type must be "Feature"', () => {
+      const invalidFeature = {
         "type": "feature",
         "geometry": {
           "type": "LineString",
@@ -643,8 +624,8 @@ describe("GeoJSON Objects", function () {
       assert.equal(false, GSV.isFeature(invalidFeature))
     })
 
-    it('must have a member with the name "geometry"', function () {
-      var invalidFeature = {
+    it('must have a member with the name "geometry"', () => {
+      const invalidFeature = {
         "type": "Feature",
         "geometr": {
           "type": "LineString",
@@ -663,9 +644,9 @@ describe("GeoJSON Objects", function () {
       assert.equal(false, GSV.isFeature(invalidFeature))
     })
 
-    describe('geometry member', function () {
-      it('must be a geometry object or a JSON null value', function () {
-        var invalidFeature = {
+    describe('geometry member', () => {
+      it('must be a geometry object or a JSON null value', () => {
+        const invalidFeature = {
           "type": "Feature",
           "geometr": {
             "type": "LineString",
@@ -685,8 +666,8 @@ describe("GeoJSON Objects", function () {
       })
     })
 
-    it('must have a member "properties"', function () {
-      var invalidFeature = {
+    it('must have a member "properties"', () => {
+      const invalidFeature = {
         "type": "Feature",
         "geometry": {
           "type": "LineString",
@@ -706,10 +687,9 @@ describe("GeoJSON Objects", function () {
     })
   })
 
-  describe('Feature Collection Objects', function () {
-
-    it('must be a valid Feature Collection Object', function () {
-      var validFeatureCollection = {
+  describe('Feature Collection Objects', () => {
+    it('must be a valid Feature Collection Object', () => {
+      const validFeatureCollection = {
         "type": "FeatureCollection",
         "features": [{
           "type": "Feature",
@@ -760,9 +740,9 @@ describe("GeoJSON Objects", function () {
       assert(GSV.isFeatureCollection(validFeatureCollection))
     })
 
-    it('member type must be "FeatureCollection"', function () {
+    it('member type must be "FeatureCollection"', () => {
 
-      var invalidFeatureCollection = {
+      const invalidFeatureCollection = {
         "type": "featureCollection",
         "features": [{
           "type": "Feature",
@@ -813,8 +793,8 @@ describe("GeoJSON Objects", function () {
       assert.equal(false, GSV.isFeatureCollection(invalidFeatureCollection))
     })
 
-    it('must have a member with the name "features"', function () {
-      var invalidFeatureCollection = {
+    it('must have a member with the name "features"', () => {
+      const invalidFeatureCollection = {
         "type": "FeatureCollection",
         "feature": [{
           "type": "Feature",
@@ -865,9 +845,9 @@ describe("GeoJSON Objects", function () {
       assert.equal(false, GSV.isFeatureCollection(invalidFeatureCollection))
     })
 
-    describe('member features', function () {
-      it('must have an array of feature objects', function () {
-        var invalidFeatureCollection = {
+    describe('member features', () => {
+      it('must have an array of feature objects', () => {
+        const invalidFeatureCollection = {
           "type": "FeatureCollection",
           "features": [{
             "type": "Feature",
@@ -921,23 +901,22 @@ describe("GeoJSON Objects", function () {
   })
 })
 
-describe('Bounding Boxes', function () {
-
-  it('must be a member named "bbox"', function () {
+describe('Bounding Boxes', () => {
+  it('must be a member named "bbox"', () => {
 
   })
 
-  it('bbox member must be a 2*n array', function () {
+  it('bbox member must be a 2*n array', () => {
 
   })
 })
 
-describe('Custom Checks', function () {
-  it("must only functions", function () {
+describe('Custom Checks', () => {
+  it("must only functions", () => {
 
   })
 
-  it('must check on the described element', function () {
+  it('must check on the described element', () => {
     GSV.define("Position", function (position) {
       errors = []
       if (position[0] < -180 || position[0] > 180) {

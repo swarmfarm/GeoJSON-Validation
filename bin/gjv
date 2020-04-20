@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-var GJV = require('../'),
+const gjv = require('../'),
   fs = require('fs'),
   filenames  = process.argv.splice(2);
 
 if (filenames.length) {
-  filenames.forEach(function(filename){
-    var file;
-    try{
+  filenames.forEach(filename => {
+    let file;
+    try {
       file = fs.readFileSync(filename);
-    }catch(e){
+    } catch(e) {
       console.log('failed to open file: ' + filename);
       return;
     }
     validateGeoJson(file);
   });
 } else {
-  var incomingJson = '';
-  process.stdin.on('readable', function () {
-    var chunk = process.stdin.read();
+  let incomingJson = '';
+  process.stdin.on('readable', () => {
+    let chunk = process.stdin.read();
     if (chunk !== null) {
       incomingJson += chunk;
     }
@@ -28,15 +28,16 @@ if (filenames.length) {
     validateGeoJson(incomingJson);
   });
 }
+
 function validateGeoJson(rawJson) {
-  var json = JSON.parse(rawJson);
-  GJV.valid(json, function (isValid, errs) {
-    if (isValid) {
-      console.log('valid!');
-    } else {
-      errs.forEach(function(err){  
-          console.log(err);
-      });
-    }
-  });
+  const json = JSON.parse(rawJson);
+  const t = gjv.valid(json, true);
+
+  if (t.length) {
+    t.forEach(err => {  
+      console.log(err);
+    });
+  } else {
+    console.log('valid!');
+  }
 }

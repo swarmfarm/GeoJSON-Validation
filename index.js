@@ -31,12 +31,12 @@ function isObject (object) {
  * Formats error messages, calls the callback
  * @method done
  * @private
- * @param cb {Function} callback
- * @param [message] {Function} callback
+ * @param trace {Boolean} Whether or not to return the trace
+ * @param [message]
  * @return {Boolean} is the object valid or not?
  */
-function _done (cb, message) {
-  var valid = false
+function _done (trace, message) {
+  let valid = false
 
   if (typeof message === 'string') {
     message = [message]
@@ -48,15 +48,11 @@ function _done (cb, message) {
     valid = true
   }
 
-  if (isFunction(cb)) {
-    if (valid) {
-      cb(valid, [])
-    } else {
-      cb(valid, message)
-    }
+  if (trace) {
+    return message
+  } else {
+    return valid
   }
-
-  return valid
 }
 
 /**
@@ -68,7 +64,7 @@ function _done (cb, message) {
  * @return {Array} an array of errors
  */
 function _customDefinitions (type, object) {
-  var errors
+  let errors
 
   if (isFunction(definitions[type])) {
     try {
@@ -93,7 +89,7 @@ function _customDefinitions (type, object) {
  * @param definition {Function} A validation function
  * @return {Boolean} Return true if the function was loaded corectly else false
  */
-exports.define = function (type, definition) {
+exports.define = (type, definition) => {
   if ((type in allTypes) && isFunction(definition)) {
     // TODO: check to see if the type is valid
     definitions[type] = definition
@@ -107,11 +103,11 @@ exports.define = function (type, definition) {
  * Determines if an object is a position or not
  * @method isPosition
  * @param position {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isPosition = function (position, cb) {
-  var errors = []
+exports.isPosition = (position, trace = false) => {
+  let errors = []
 
   // It must be an array
   if (Array.isArray(position)) {
@@ -120,7 +116,7 @@ exports.isPosition = function (position, cb) {
       errors.push('Position must be at least two elements')
     }
 
-    position.forEach(function(pos, index) {
+    position.forEach((pos, index) => {
       if (typeof pos !== 'number') {
         errors.push('Position must only contain numbers. Item '+pos+' at index '+index+' is invalid.')
       }
@@ -131,27 +127,26 @@ exports.isPosition = function (position, cb) {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Position', position))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a GeoJSON Object or not
  * @method isGeoJSONObject|valid
  * @param geoJSONObject {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isGeoJSONObject = exports.valid = function (geoJSONObject, cb) {
+exports.isGeoJSONObject = exports.valid = (geoJSONObject, trace = false) => {
   if (!isObject(geoJSONObject)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   } else {
-    var errors = []
+    let errors = []
     if ('type' in geoJSONObject) {
       if (nonGeoTypes[geoJSONObject.type]) {
-        return nonGeoTypes[geoJSONObject.type](geoJSONObject, cb)
+        return nonGeoTypes[geoJSONObject.type](geoJSONObject, trace)
       } else if (geoTypes[geoJSONObject.type]) {
-        return geoTypes[geoJSONObject.type](geoJSONObject, cb)
+        return geoTypes[geoJSONObject.type](geoJSONObject, trace)
       } else {
         errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"')
       }
@@ -161,7 +156,7 @@ exports.isGeoJSONObject = exports.valid = function (geoJSONObject, cb) {
 
     // run custom checks
     errors = errors.concat(_customDefinitions('GeoJSONObject', geoJSONObject))
-    return _done(cb, errors)
+    return _done(trace, errors)
   }
 }
 
@@ -169,19 +164,18 @@ exports.isGeoJSONObject = exports.valid = function (geoJSONObject, cb) {
  * Determines if an object is a Geometry Object or not
  * @method isGeometryObject
  * @param geometryObject {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isGeometryObject = function (geometryObject, cb) {
+exports.isGeometryObject = (geometryObject, trace = false) => {
   if (!isObject(geometryObject)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('type' in geometryObject) {
     if (geoTypes[geometryObject.type]) {
-      return geoTypes[geometryObject.type](geometryObject, cb)
+      return geoTypes[geometryObject.type](geometryObject, trace)
     } else {
       errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"')
     }
@@ -191,29 +185,27 @@ exports.isGeometryObject = function (geometryObject, cb) {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('GeometryObject', geometryObject))
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a Point or not
  * @method isPoint
  * @param point {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isPoint = function (point, cb) {
+exports.isPoint = (point, trace = false) => {
   if (!isObject(point)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in point) {
-    exports.isBbox(point.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(point.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in point) {
@@ -225,11 +217,10 @@ exports.isPoint = function (point, cb) {
   }
 
   if ('coordinates' in point) {
-    exports.isPosition(point.coordinates, function (valid, err) {
-      if (!valid) {
-        errors.push('Coordinates must be a single position')
-      }
-    })
+    const t = exports.isPosition(point.coordinates, true)
+    if (t.length) {
+      errors.push('Coordinates must be a single position')
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
@@ -237,56 +228,52 @@ exports.isPoint = function (point, cb) {
   // run custom checks
   errors = errors.concat(_customDefinitions('Point', point))
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an array can be interperted as coordinates for a MultiPoint
  * @method isMultiPointCoor
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiPointCoor = function (coordinates, cb) {
-  var errors = []
+exports.isMultiPointCoor = (coordinates, trace = false) => {
+  let errors = []
 
   if (Array.isArray(coordinates)) {
-    coordinates.forEach(function (val, index) {
-      exports.isPosition(val, function (valid, err) {
-        if (!valid) {
-          // modify the err msg from "isPosition" to note the element number
-          err[0] = 'at ' + index + ': '.concat(err[0])
-          // build a list of invalide positions
-          errors = errors.concat(err)
-        }
-      })
+    coordinates.forEach((val, index) => {
+      const t = exports.isPosition(val, true)
+      if (t.length) {
+        // modify the err msg from "isPosition" to note the element number
+        t[0] = 'at ' + index + ': '.concat(t[0])
+        // build a list of invalide positions
+        errors = errors.concat(t)
+      }
     })
   } else {
     errors.push('coordinates must be an array')
   }
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 /**
  * Determines if an object is a MultiPoint or not
  * @method isMultiPoint
  * @param position {Object}
- * @param cb {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiPoint = function (multiPoint, cb) {
+exports.isMultiPoint = (multiPoint, trace = false) => {
   if (!isObject(multiPoint)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in multiPoint) {
-    exports.isBbox(multiPoint.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(multiPoint.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in multiPoint) {
@@ -298,41 +285,38 @@ exports.isMultiPoint = function (multiPoint, cb) {
   }
 
   if ('coordinates' in multiPoint) {
-    exports.isMultiPointCoor(multiPoint.coordinates, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isMultiPointCoor(multiPoint.coordinates, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
 
   // run custom checks
   errors = errors.concat(_customDefinitions('MultiPoint', multiPoint))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an array can be interperted as coordinates for a lineString
  * @method isLineStringCoor
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isLineStringCoor = function (coordinates, cb) {
-  var errors = []
+exports.isLineStringCoor = (coordinates, trace = false) => {
+  let errors = []
   if (Array.isArray(coordinates)) {
     if (coordinates.length > 1) {
-      coordinates.forEach(function (val, index) {
-        exports.isPosition(val, function (valid, err) {
-          if (!valid) {
-            // modify the err msg from 'isPosition' to note the element number
-            err[0] = 'at ' + index + ': '.concat(err[0])
-            // build a list of invalide positions
-            errors = errors.concat(err)
-          }
-        })
+      coordinates.forEach((val, index) => {
+        const t = exports.isPosition(val, true)
+        if (t.length) {
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = 'at ' + index + ': '.concat(t[0])
+          // build a list of invalide positions
+          errors = errors.concat(t)
+        }
       })
     } else {
       errors.push('coordinates must have at least two elements')
@@ -341,29 +325,27 @@ exports.isLineStringCoor = function (coordinates, cb) {
     errors.push('coordinates must be an array')
   }
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a lineString or not
  * @method isLineString
  * @param lineString {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isLineString = function (lineString, cb) {
+exports.isLineString = (lineString, trace = false) => {
   if (!isObject(lineString)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in lineString) {
-    exports.isBbox(lineString.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(lineString.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in lineString) {
@@ -375,67 +357,62 @@ exports.isLineString = function (lineString, cb) {
   }
 
   if ('coordinates' in lineString) {
-    exports.isLineStringCoor(lineString.coordinates, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isLineStringCoor(lineString.coordinates, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
 
   // run custom checks
   errors = errors.concat(_customDefinitions('LineString', lineString))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an array can be interperted as coordinates for a MultiLineString
  * @method isMultiLineStringCoor
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiLineStringCoor = function (coordinates, cb) {
-  var errors = []
-  if (Array.isArray(coordinates)) {
-    coordinates.forEach(function (val, index) {
-      exports.isLineStringCoor(val, function (valid, err) {
-        if (!valid) {
-          // modify the err msg from 'isPosition' to note the element number
-          err[0] = 'at ' + index + ': '.concat(err[0])
-          // build a list of invalide positions
-          errors = errors.concat(err)
-        }
-      })
-    })
-  } else {
-    errors.push('coordinates must be an array')
-  }
-  _done(cb, errors)
+exports.isMultiLineStringCoor = (coordinates, trace = false) => {
+    let errors = []
+    if (Array.isArray(coordinates)) {
+	coordinates.forEach((val, index) => {
+	    const t = exports.isLineStringCoor(val, true)
+	    if (t.length) {
+		// modify the err msg from 'isPosition' to note the element number
+		t[0] = 'at ' + index + ': '.concat(t[0])
+		// build a list of invalide positions
+		errors = errors.concat(t)
+	    }
+	})
+    } else {
+	errors.push('coordinates must be an array')
+    }
+    return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a MultiLine String or not
  * @method isMultiLineString
  * @param multilineString {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiLineString = function (multilineString, cb) {
+exports.isMultiLineString = (multilineString, trace = false) => {
   if (!isObject(multilineString)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in multilineString) {
-    exports.isBbox(multilineString.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(multilineString.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in multilineString) {
@@ -447,19 +424,18 @@ exports.isMultiLineString = function (multilineString, cb) {
   }
 
   if ('coordinates' in multilineString) {
-    exports.isMultiLineStringCoor(multilineString.coordinates, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isMultiLineStringCoor(multilineString.coordinates, true)
+
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
 
   // run custom checks
   errors = errors.concat(_customDefinitions('MultiPoint', multilineString))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
@@ -467,23 +443,21 @@ exports.isMultiLineString = function (multilineString, cb) {
  * @method isMultiLineString
  * @private
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-function _linearRingCoor (coordinates, cb) {
-  var errors = []
+function _linearRingCoor (coordinates, trace) {
+  let errors = []
   if (Array.isArray(coordinates)) {
     // 4 or more positions
-
-    coordinates.forEach(function (val, index) {
-      exports.isPosition(val, function (valid, err) {
-        if (!valid) {
-          // modify the err msg from 'isPosition' to note the element number
-          err[0] = 'at ' + index + ': '.concat(err[0])
-          // build a list of invalide positions
-          errors = errors.concat(err)
-        }
-      })
+    coordinates.forEach((val, index) => {
+      const t = exports.isPosition(val, true)
+      if (t.length) {
+	// modify the err msg from 'isPosition' to note the element number
+	t[0] = 'at ' + index + ': '.concat(t[0])
+	// build a list of invalide positions
+	errors = errors.concat(t)
+      }
     })
 
     // check the first and last positions to see if they are equivalent
@@ -499,7 +473,7 @@ function _linearRingCoor (coordinates, cb) {
     errors.push('coordinates must be an array')
   }
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
@@ -507,49 +481,48 @@ function _linearRingCoor (coordinates, cb) {
  * @method _polygonCoor
  * @private
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isPolygonCoor = function (coordinates, cb) {
-  var errors = []
+exports.isPolygonCoor = (coordinates, trace = false) => {
+  let errors = []
   if (Array.isArray(coordinates)) {
-    coordinates.forEach(function (val, index) {
-      _linearRingCoor(val, function (valid, err) {
-        if (!valid) {
-          // modify the err msg from 'isPosition' to note the element number
-          err[0] = 'at ' + index + ': '.concat(err[0])
-          // build a list of invalid positions
-          errors = errors.concat(err)
-        }
-      })
+    coordinates.forEach((val, index) => {
+      const t = _linearRingCoor(val, true)
+
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = 'at ' + index + ': '.concat(t[0])
+        // build a list of invalid positions
+        errors = errors.concat(t)
+      }
     })
   } else {
     errors.push('coordinates must be an array')
   }
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid Polygon
  * @method isPolygon
  * @param polygon {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isPolygon = function (polygon, cb) {
+exports.isPolygon = (polygon, trace = false) => {
   if (!isObject(polygon)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
+  let errors = []
 
   if ('bbox' in polygon) {
-    exports.isBbox(polygon.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(polygon.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in polygon) {
@@ -561,11 +534,10 @@ exports.isPolygon = function (polygon, cb) {
   }
 
   if ('coordinates' in polygon) {
-    exports.isPolygonCoor(polygon.coordinates, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isPolygonCoor(polygon.coordinates, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
@@ -573,56 +545,53 @@ exports.isPolygon = function (polygon, cb) {
   // run custom checks
   errors = errors.concat(_customDefinitions('Polygon', polygon))
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an array can be interperted as coordinates for a MultiPolygon
  * @method isMultiPolygonCoor
  * @param coordinates {Array}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiPolygonCoor = function (coordinates, cb) {
-  var errors = []
+exports.isMultiPolygonCoor = (coordinates, trace = false) => {
+  let errors = []
   if (Array.isArray(coordinates)) {
-    coordinates.forEach(function (val, index) {
-      exports.isPolygonCoor(val, function (valid, err) {
-        if (!valid) {
-          // modify the err msg from 'isPosition' to note the element number
-          err[0] = 'at ' + index + ': '.concat(err[0])
-          // build a list of invalide positions
-          errors = errors.concat(err)
-        }
-      })
+    coordinates.forEach((val, index) => {
+      const t = exports.isPolygonCoor(val, true)
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = 'at ' + index + ': '.concat(t[0])
+        // build a list of invalide positions
+        errors = errors.concat(t)
+      }
     })
   } else {
     errors.push('coordinates must be an array')
   }
 
-  _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid MultiPolygon
  * @method isMultiPolygon
  * @param multiPolygon {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isMultiPolygon = function (multiPolygon, cb) {
+exports.isMultiPolygon = (multiPolygon, trace = false) => {
   if (!isObject(multiPolygon)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in multiPolygon) {
-    exports.isBbox(multiPolygon.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(multiPolygon.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in multiPolygon) {
@@ -634,11 +603,10 @@ exports.isMultiPolygon = function (multiPolygon, cb) {
   }
 
   if ('coordinates' in multiPolygon) {
-    exports.isMultiPolygonCoor(multiPolygon.coordinates, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isMultiPolygonCoor(multiPolygon.coordinates, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   } else {
     errors.push('must have a member with the name "coordinates"')
   }
@@ -646,29 +614,27 @@ exports.isMultiPolygon = function (multiPolygon, cb) {
   // run custom checks
   errors = errors.concat(_customDefinitions('MultiPolygon', multiPolygon))
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid Geometry Collection
  * @method isGeometryCollection
  * @param geometryCollection {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isGeometryCollection = function (geometryCollection, cb) {
+exports.isGeometryCollection = (geometryCollection, trace = false) => {
   if (!isObject(geometryCollection)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in geometryCollection) {
-    exports.isBbox(geometryCollection.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(geometryCollection.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in geometryCollection) {
@@ -681,15 +647,14 @@ exports.isGeometryCollection = function (geometryCollection, cb) {
 
   if ('geometries' in geometryCollection) {
     if (Array.isArray(geometryCollection.geometries)) {
-      geometryCollection.geometries.forEach(function (val, index) {
-        exports.isGeometryObject(val, function (valid, err) {
-          if (!valid) {
-            // modify the err msg from 'isPosition' to note the element number
-            err[0] = 'at ' + index + ': '.concat(err[0])
-            // build a list of invalide positions
-            errors = errors.concat(err)
-          }
-        })
+      geometryCollection.geometries.forEach((val, index) => {
+        const t = exports.isGeometryObject(val, true)
+        if (t.length) {
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = 'at ' + index + ': '.concat(t[0])
+          // build a list of invalide positions
+          errors = errors.concat(t)
+        }
       })
     } else {
       errors.push('"geometries" must be an array')
@@ -701,29 +666,27 @@ exports.isGeometryCollection = function (geometryCollection, cb) {
   // run custom checks
   errors = errors.concat(_customDefinitions('GeometryCollection', geometryCollection))
 
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid Feature
  * @method isFeature
  * @param feature {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isFeature = function (feature, cb) {
+exports.isFeature = (feature, trace = false) => {
   if (!isObject(feature)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in feature) {
-    exports.isBbox(feature.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(feature.bbox, true)
+    if (t.length) {
+      errors = errors.concat(t)
+    }
   }
 
   if ('type' in feature) {
@@ -740,11 +703,10 @@ exports.isFeature = function (feature, cb) {
 
   if ('geometry' in feature) {
     if (feature.geometry !== null) {
-      exports.isGeometryObject(feature.geometry, function (valid, err) {
-        if (!valid) {
-          errors = errors.concat(err)
-        }
-      })
+      const t = exports.isGeometryObject(feature.geometry, true)
+      if (t.length) {
+        errors = errors.concat(t)
+      }
     }
   } else {
     errors.push('must have a member with the name "geometry"')
@@ -752,30 +714,27 @@ exports.isFeature = function (feature, cb) {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Feature', feature))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid Feature Collection
  * @method isFeatureCollection
  * @param featureCollection {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isFeatureCollection = function (featureCollection, cb) {
+exports.isFeatureCollection = (featureCollection, trace = false) => {
   if (!isObject(featureCollection)) {
-    return _done(cb, ['must be a JSON Object'])
+    return _done(trace, ['must be a JSON Object'])
   }
 
-  var errors = []
-
+  let errors = []
   if ('bbox' in featureCollection) {
-    exports.isBbox(featureCollection.bbox, function (valid, err) {
-      if (!valid) {
-        errors = errors.concat(err)
-      }
-    })
+    const t = exports.isBbox(featureCollection.bbox, true)
+    if (t.length) {
+      errors = t
+    }
   }
 
   if ('type' in featureCollection) {
@@ -788,15 +747,15 @@ exports.isFeatureCollection = function (featureCollection, cb) {
 
   if ('features' in featureCollection) {
     if (Array.isArray(featureCollection.features)) {
-      featureCollection.features.forEach(function (val, index) {
-        exports.isFeature(val, function (valid, err) {
-          if (!valid) {
-            // modify the err msg from 'isPosition' to note the element number
-            err[0] = 'at ' + index + ': '.concat(err[0])
-            // build a list of invalide positions
-            errors = errors.concat(err)
-          }
-        })
+      featureCollection.features.forEach((val, index) => {
+        const t = exports.isFeature(val, true)
+        if (t.length) {
+
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = 'at ' + index + ': '.concat(t[0])
+          // build a list of invalide positions
+          errors = errors.concat(t)
+        }
       })
     } else {
       errors.push('"Features" must be an array')
@@ -807,19 +766,18 @@ exports.isFeatureCollection = function (featureCollection, cb) {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('FeatureCollection', featureCollection))
-
-  return _done(cb, errors)
+  return _done(trace, errors)
 }
 
 /**
  * Determines if an object is a valid Bounding Box
  * @method isBbox
  * @param bbox {Object}
- * @param [cb] {Function} the callback
+ * @param [trace] {Boolean}
  * @return {Boolean}
  */
-exports.isBbox = function (bbox, cb) {
-  var errors = []
+exports.isBbox = (bbox, trace = false) => {
+  let errors = []
   if (Array.isArray(bbox)) {
     if (bbox.length % 2 !== 0) {
       errors.push('bbox, must be a 2*n array')
@@ -830,8 +788,7 @@ exports.isBbox = function (bbox, cb) {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Bbox', bbox))
-
-  _done(cb, errors)
+  _done(trace, errors)
 }
 
 const nonGeoTypes = {
