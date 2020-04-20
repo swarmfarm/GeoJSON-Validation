@@ -1,11 +1,8 @@
 {
   "name": "geojson-validation",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GeoJSON Validation Library",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "devDependencies": {
     "documentation": "^12.3.0",
     "mocha": "^7.1.1"
