@@ -787,7 +787,7 @@ exports.isBbox = (bbox, trace = false) => {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Bbox', bbox))
-  _done(trace, errors)
+  return _done(trace, errors)
 }
 
 const nonGeoTypes = {
