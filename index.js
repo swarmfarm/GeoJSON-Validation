@@ -787,7 +787,7 @@ exports.isBbox = (bbox, trace = false) => {
 
   // run custom checks
   errors = errors.concat(_customDefinitions('Bbox', bbox))
-  _done(trace, errors)
+  return _done(trace, errors)
 }
 
 const nonGeoTypes = {
@@ -815,7 +815,7 @@ const allTypes = {
   'Polygon': exports.isPolygon,
   'MultiPolygon': exports.isMultiPolygon,
   'GeometryCollection': exports.isGeometryCollection,
-  'Bbox': exports.isBox,
+  'Bbox': exports.isBbox,
   'Position': exports.isPosition,
   'GeoJSON': exports.isGeoJSONObject,
   'GeometryObject': exports.isGeometryObject
