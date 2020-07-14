@@ -815,7 +815,7 @@ const allTypes = {
   'Polygon': exports.isPolygon,
   'MultiPolygon': exports.isMultiPolygon,
   'GeometryCollection': exports.isGeometryCollection,
-  'Bbox': exports.isBox,
+  'Bbox': exports.isBbox,
   'Position': exports.isPosition,
   'GeoJSON': exports.isGeoJSONObject,
   'GeometryObject': exports.isGeometryObject
