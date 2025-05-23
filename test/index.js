@@ -671,6 +671,44 @@ describe("GeoJSON Objects", () => {
       };
       assert.equal(false, GSV.isFeature(invalidFeature));
     });
+
+    describe("isFeature function with makePropertiesRequired parameter", () => {
+      it("should validate a Feature without properties when makePropertiesRequired is false", function () {
+        var feature = {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [0, 0] },
+          // No properties member
+        };
+        assert.ok(GSV.isFeature(feature, false, false)); // makePropertiesRequired = false
+      });
+
+      it("should not validate a Feature without properties when makePropertiesRequired is true", function () {
+        var feature = {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [0, 0] },
+          // No properties member
+        };
+        assert.equal(false, GSV.isFeature(feature, false, true)); // makePropertiesRequired = true
+      });
+
+      it("should validate a Feature with null properties when makePropertiesRequired is false", function () {
+        var feature = {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [0, 0] },
+          properties: null,
+        };
+        assert.ok(GSV.isFeature(feature, false, false)); // makePropertiesRequired = false
+      });
+
+      it("should validate a Feature with empty properties when makePropertiesRequired is false", function () {
+        var feature = {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [0, 0] },
+          properties: {},
+        };
+        assert.ok(GSV.isFeature(feature, false, false)); // makePropertiesRequired = false
+      });
+    });
   });
 
   describe("Feature Collection Objects", () => {

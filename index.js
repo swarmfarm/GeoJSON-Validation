@@ -688,9 +688,10 @@ exports.isGeometryCollection = (geometryCollection, trace = false) => {
  * @method isFeature
  * @param feature {Object}
  * @param [trace] {Boolean}
+ * @param [makePropertiesRequired] {Boolean}
  * @return {Boolean}
  */
-exports.isFeature = (feature, trace = false) => {
+exports.isFeature = (feature, trace = false, makePropertiesRequired = true) => {
   if (!isObject(feature)) {
     return _done(trace, ["must be a JSON Object"]);
   }
@@ -711,7 +712,7 @@ exports.isFeature = (feature, trace = false) => {
     errors.push('must have a member with the name "type"');
   }
 
-  if (!("properties" in feature)) {
+  if (makePropertiesRequired && !("properties" in feature)) {
     errors.push('must have a member with the name "properties"');
   }
 
