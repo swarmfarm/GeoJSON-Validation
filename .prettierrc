@@ -1,0 +1,15 @@
+{
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "printWidth": 120,
+    "overrides": [
+        {
+            "files": "**/*.mdx",
+            "options": {
+                "printWidth": 160
+            }
+        }
+    ],
+    "useTabs": false,
+    "proseWrap": "always"
+}
