@@ -1,6 +1,6 @@
 {
   "name": "geojson-validation",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A GeoJSON Validation Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,15 +22,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
+    "url": "https://github.com/swarmfarm/GeoJSON-Validation.git"
   },
-  "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
+  "homepage": "https://github.com/swarmfarm/GeoJSON-Validation",
   "keywords": [
     "GeoJSON",
     "Validation",
     "Geo",
     "cli"
-  ],
-  "author": "mjbecze <mjbecze@gmail.com>",
-  "license": "LGPL-3"
+  ]
 }
