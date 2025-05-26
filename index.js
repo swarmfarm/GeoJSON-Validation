@@ -14,7 +14,7 @@ const definitions = {};
  * @return {Boolean}
  */
 function isFunction(object) {
-    return typeof object === "function";
+  return typeof object === "function";
 }
 
 /**
@@ -24,7 +24,7 @@ function isFunction(object) {
  * @return {Boolean}
  */
 function isObject(object) {
-    return object === Object(object);
+  return object === Object(object);
 }
 
 /**
@@ -36,27 +36,30 @@ function isObject(object) {
  * @return {Boolean} is the object valid or not?
  */
 function _done(trace, message) {
-    let valid = false;
+  let valid = false;
+  let formattedMessage = message;
 
-    if (typeof message === "string") {
-        message = [message];
-    } else if (Object.prototype.toString.call(message) === "[object Array]") {
-        if (message.length === 0) {
-            valid = true;
-        }
-    } else {
-        valid = true;
+  if (typeof formattedMessage === "string") {
+    formattedMessage = [formattedMessage];
+  } else if (
+    Object.prototype.toString.call(formattedMessage) === "[object Array]"
+  ) {
+    if (formattedMessage.length === 0) {
+      valid = true;
     }
+  } else {
+    valid = true;
+  }
 
-    if (trace) {
-        return message;
-    } else {
-        return valid;
-    }
+  if (trace) {
+    return formattedMessage;
+  }
+
+  return valid;
 }
 
 /**
- * calls a custom definition if one is avalible for the given type
+ * calls a custom definition if one is available for the given type
  * @method _customDefinitions
  * @private
  * @param type {'String'} a GeoJSON object type
@@ -64,22 +67,22 @@ function _done(trace, message) {
  * @return {Array} an array of errors
  */
 function _customDefinitions(type, object) {
-    let errors;
+  let errors;
 
-    if (isFunction(definitions[type])) {
-        try {
-            errors = definitions[type](object);
-        } catch (e) {
-            errors = ["Problem with custom definition for " + type + ": " + e];
-        }
-        if (typeof result === "string") {
-            errors = [errors];
-        }
-        if (Object.prototype.toString.call(errors) === "[object Array]") {
-            return errors;
-        }
+  if (isFunction(definitions[type])) {
+    try {
+      errors = definitions[type](object);
+    } catch (e) {
+      errors = [`Problem with custom definition for ${type}: ${e}`];
     }
-    return [];
+    if (typeof errors === "string") {
+      errors = [errors];
+    }
+    if (Object.prototype.toString.call(errors) === "[object Array]") {
+      return errors;
+    }
+  }
+  return [];
 }
 
 /**
@@ -90,13 +93,13 @@ function _customDefinitions(type, object) {
  * @return {Boolean} Return true if the function was loaded correctly else false
  */
 exports.define = (type, definition) => {
-    if (type in allTypes && isFunction(definition)) {
-        // TODO: check to see if the type is valid
-        definitions[type] = definition;
-        return true;
-    } else {
-        return false;
-    }
+  if (type in allTypes && isFunction(definition)) {
+    // TODO: check to see if the type is valid
+    definitions[type] = definition;
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -107,27 +110,29 @@ exports.define = (type, definition) => {
  * @return {Boolean}
  */
 exports.isPosition = (position, trace = false) => {
-    let errors = [];
+  let errors = [];
 
-    // It must be an array
-    if (Array.isArray(position)) {
-        // and the array must have more than one element
-        if (position.length <= 1) {
-            errors.push("Position must be at least two elements");
-        }
-
-        position.forEach((pos, index) => {
-            if (typeof pos !== "number") {
-                errors.push("Position must only contain numbers. Item " + pos + " at index " + index + " is invalid.");
-            }
-        });
-    } else {
-        errors.push("Position must be an array");
+  // It must be an array
+  if (Array.isArray(position)) {
+    // and the array must have more than one element
+    if (position.length <= 1) {
+      errors.push("Position must be at least two elements");
     }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("Position", position));
-    return _done(trace, errors);
+    position.forEach((pos, index) => {
+      if (typeof pos !== "number") {
+        errors.push(
+          `Position must only contain numbers. Item ${pos} at index ${index} is invalid.`,
+        );
+      }
+    });
+  } else {
+    errors.push("Position must be an array");
+  }
+
+  // run custom checks
+  errors = errors.concat(_customDefinitions("Position", position));
+  return _done(trace, errors);
 };
 
 /**
@@ -138,28 +143,28 @@ exports.isPosition = (position, trace = false) => {
  * @return {Boolean}
  */
 exports.isGeoJSONObject = exports.valid = (geoJSONObject, trace = false) => {
-    if (!isObject(geoJSONObject)) {
-        return _done(trace, ["must be a JSON Object"]);
-    } else {
-        let errors = [];
-        if ("type" in geoJSONObject) {
-            if (nonGeoTypes[geoJSONObject.type]) {
-                return nonGeoTypes[geoJSONObject.type](geoJSONObject, trace);
-            } else if (geoTypes[geoJSONObject.type]) {
-                return geoTypes[geoJSONObject.type](geoJSONObject, trace);
-            } else {
-                errors.push(
-                    'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"'
-                );
-            }
-        } else {
-            errors.push('must have a member with the name "type"');
-        }
+  if (!isObject(geoJSONObject)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-        // run custom checks
-        errors = errors.concat(_customDefinitions("GeoJSONObject", geoJSONObject));
-        return _done(trace, errors);
+  let errors = [];
+  if ("type" in geoJSONObject) {
+    if (nonGeoTypes[geoJSONObject.type]) {
+      return nonGeoTypes[geoJSONObject.type](geoJSONObject, trace);
     }
+    if (geoTypes[geoJSONObject.type]) {
+      return geoTypes[geoJSONObject.type](geoJSONObject, trace);
+    }
+    errors.push(
+      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"',
+    );
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
+
+  // run custom checks
+  errors = errors.concat(_customDefinitions("GeoJSONObject", geoJSONObject));
+  return _done(trace, errors);
 };
 
 /**
@@ -170,26 +175,26 @@ exports.isGeoJSONObject = exports.valid = (geoJSONObject, trace = false) => {
  * @return {Boolean}
  */
 exports.isGeometryObject = (geometryObject, trace = false) => {
-    if (!isObject(geometryObject)) {
-        return _done(trace, ["must be a JSON Object"]);
+  if (!isObject(geometryObject)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
+
+  let errors = [];
+  if ("type" in geometryObject) {
+    if (geoTypes[geometryObject.type]) {
+      return geoTypes[geometryObject.type](geometryObject, trace);
     }
 
-    let errors = [];
-    if ("type" in geometryObject) {
-        if (geoTypes[geometryObject.type]) {
-            return geoTypes[geometryObject.type](geometryObject, trace);
-        } else {
-            errors.push(
-                'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"'
-            );
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
-    }
+    errors.push(
+      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"',
+    );
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("GeometryObject", geometryObject));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("GeometryObject", geometryObject));
+  return _done(trace, errors);
 };
 
 /**
@@ -200,38 +205,38 @@ exports.isGeometryObject = (geometryObject, trace = false) => {
  * @return {Boolean}
  */
 exports.isPoint = (point, trace = false) => {
-    if (!isObject(point)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(point)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in point) {
-        const t = exports.isBbox(point.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  let errors = [];
+  if ("bbox" in point) {
+    const t = exports.isBbox(point.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    if ("type" in point) {
-        if (point.type !== "Point") {
-            errors.push('type must be "Point"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("type" in point) {
+    if (point.type !== "Point") {
+      errors.push('type must be "Point"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("coordinates" in point) {
-        const t = exports.isPosition(point.coordinates, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
+  if ("coordinates" in point) {
+    const t = exports.isPosition(point.coordinates, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("Point", point));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("Point", point));
+  return _done(trace, errors);
 };
 
 /**
@@ -242,22 +247,22 @@ exports.isPoint = (point, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiPointCoor = (coordinates, trace = false) => {
-    let errors = [];
+  let errors = [];
 
-    if (Array.isArray(coordinates)) {
-        coordinates.forEach((val, index) => {
-            const t = exports.isPosition(val, true);
-            if (t.length) {
-                // modify the err msg from "isPosition" to note the element number
-                t[0] = "at " + index + ": ".concat(t[0]);
-                // build a list of invalid positions
-                errors = errors.concat(t);
-            }
-        });
-    } else {
-        errors.push("coordinates must be an array");
-    }
-    return _done(trace, errors);
+  if (Array.isArray(coordinates)) {
+    coordinates.forEach((val, index) => {
+      const t = exports.isPosition(val, true);
+      if (t.length) {
+        // modify the err msg from "isPosition" to note the element number
+        t[0] = `at ${index}: ${t[0]}`;
+        // build a list of invalid positions
+        errors = errors.concat(t);
+      }
+    });
+  } else {
+    errors.push("coordinates must be an array");
+  }
+  return _done(trace, errors);
 };
 /**
  * Determines if an object is a MultiPoint or not
@@ -267,38 +272,38 @@ exports.isMultiPointCoor = (coordinates, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiPoint = (multiPoint, trace = false) => {
-    if (!isObject(multiPoint)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(multiPoint)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in multiPoint) {
-        const t = exports.isBbox(multiPoint.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  let errors = [];
+  if ("bbox" in multiPoint) {
+    const t = exports.isBbox(multiPoint.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    if ("type" in multiPoint) {
-        if (multiPoint.type !== "MultiPoint") {
-            errors.push('type must be "MultiPoint"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("type" in multiPoint) {
+    if (multiPoint.type !== "MultiPoint") {
+      errors.push('type must be "MultiPoint"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("coordinates" in multiPoint) {
-        const t = exports.isMultiPointCoor(multiPoint.coordinates, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
+  if ("coordinates" in multiPoint) {
+    const t = exports.isMultiPointCoor(multiPoint.coordinates, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("MultiPoint", multiPoint));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("MultiPoint", multiPoint));
+  return _done(trace, errors);
 };
 
 /**
@@ -309,26 +314,26 @@ exports.isMultiPoint = (multiPoint, trace = false) => {
  * @return {Boolean}
  */
 exports.isLineStringCoor = (coordinates, trace = false) => {
-    let errors = [];
-    if (Array.isArray(coordinates)) {
-        if (coordinates.length > 1) {
-            coordinates.forEach((val, index) => {
-                const t = exports.isPosition(val, true);
-                if (t.length) {
-                    // modify the err msg from 'isPosition' to note the element number
-                    t[0] = "at " + index + ": ".concat(t[0]);
-                    // build a list of invalid positions
-                    errors = errors.concat(t);
-                }
-            });
-        } else {
-            errors.push("coordinates must have at least two elements");
+  let errors = [];
+  if (Array.isArray(coordinates)) {
+    if (coordinates.length > 1) {
+      coordinates.forEach((val, index) => {
+        const t = exports.isPosition(val, true);
+        if (t.length) {
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = `at ${index}: ${t[0]}`;
+          // build a list of invalid positions
+          errors = errors.concat(t);
         }
+      });
     } else {
-        errors.push("coordinates must be an array");
+      errors.push("coordinates must have at least two elements");
     }
+  } else {
+    errors.push("coordinates must be an array");
+  }
 
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -339,38 +344,38 @@ exports.isLineStringCoor = (coordinates, trace = false) => {
  * @return {Boolean}
  */
 exports.isLineString = (lineString, trace = false) => {
-    if (!isObject(lineString)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(lineString)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in lineString) {
-        const t = exports.isBbox(lineString.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  let errors = [];
+  if ("bbox" in lineString) {
+    const t = exports.isBbox(lineString.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    if ("type" in lineString) {
-        if (lineString.type !== "LineString") {
-            errors.push('type must be "LineString"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("type" in lineString) {
+    if (lineString.type !== "LineString") {
+      errors.push('type must be "LineString"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("coordinates" in lineString) {
-        const t = exports.isLineStringCoor(lineString.coordinates, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
+  if ("coordinates" in lineString) {
+    const t = exports.isLineStringCoor(lineString.coordinates, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("LineString", lineString));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("LineString", lineString));
+  return _done(trace, errors);
 };
 
 /**
@@ -381,21 +386,21 @@ exports.isLineString = (lineString, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiLineStringCoor = (coordinates, trace = false) => {
-    let errors = [];
-    if (Array.isArray(coordinates)) {
-        coordinates.forEach((val, index) => {
-            const t = exports.isLineStringCoor(val, true);
-            if (t.length) {
-                // modify the err msg from 'isPosition' to note the element number
-                t[0] = "at " + index + ": ".concat(t[0]);
-                // build a list of invalid positions
-                errors = errors.concat(t);
-            }
-        });
-    } else {
-        errors.push("coordinates must be an array");
-    }
-    return _done(trace, errors);
+  let errors = [];
+  if (Array.isArray(coordinates)) {
+    coordinates.forEach((val, index) => {
+      const t = exports.isLineStringCoor(val, true);
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = `at ${index}: ${t[0]}`;
+        // build a list of invalid positions
+        errors = errors.concat(t);
+      }
+    });
+  } else {
+    errors.push("coordinates must be an array");
+  }
+  return _done(trace, errors);
 };
 
 /**
@@ -406,39 +411,39 @@ exports.isMultiLineStringCoor = (coordinates, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiLineString = (multilineString, trace = false) => {
-    if (!isObject(multilineString)) {
-        return _done(trace, ["must be a JSON Object"]);
+  if (!isObject(multilineString)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
+
+  let errors = [];
+  if ("bbox" in multilineString) {
+    const t = exports.isBbox(multilineString.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    let errors = [];
-    if ("bbox" in multilineString) {
-        const t = exports.isBbox(multilineString.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  if ("type" in multilineString) {
+    if (multilineString.type !== "MultiLineString") {
+      errors.push('type must be "MultiLineString"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("type" in multilineString) {
-        if (multilineString.type !== "MultiLineString") {
-            errors.push('type must be "MultiLineString"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("coordinates" in multilineString) {
+    const t = exports.isMultiLineStringCoor(multilineString.coordinates, true);
+
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    if ("coordinates" in multilineString) {
-        const t = exports.isMultiLineStringCoor(multilineString.coordinates, true);
-
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
-    }
-
-    // run custom checks
-    errors = errors.concat(_customDefinitions("MultiPoint", multilineString));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("MultiPoint", multilineString));
+  return _done(trace, errors);
 };
 
 /**
@@ -450,27 +455,27 @@ exports.isMultiLineString = (multilineString, trace = false) => {
  * @return {Boolean}
  */
 function _linearRingCoor(coordinates, trace) {
-    let errors = [];
-    if (Array.isArray(coordinates)) {
-        // 4 or more positions
-        coordinates.forEach((val, index) => {
-            const t = exports.isPosition(val, true);
-            if (t.length) {
-                // modify the err msg from 'isPosition' to note the element number
-                t[0] = "at " + index + ": ".concat(t[0]);
-                // build a list of invalid positions
-                errors = errors.concat(t);
-            }
-        });
+  let errors = [];
+  if (Array.isArray(coordinates)) {
+    // 4 or more positions
+    coordinates.forEach((val, index) => {
+      const t = exports.isPosition(val, true);
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = `at ${index}: ${t[0]}`;
+        // build a list of invalid positions
+        errors = errors.concat(t);
+      }
+    });
 
-        if (coordinates.length < 4) {
-            errors.push("coordinates must have at least four positions");
-        }
-    } else {
-        errors.push("coordinates must be an array");
+    if (coordinates.length < 4) {
+      errors.push("coordinates must have at least four positions");
     }
+  } else {
+    errors.push("coordinates must be an array");
+  }
 
-    return _done(trace, errors);
+  return _done(trace, errors);
 }
 
 /**
@@ -482,23 +487,23 @@ function _linearRingCoor(coordinates, trace) {
  * @return {Boolean}
  */
 exports.isPolygonCoor = (coordinates, trace = false) => {
-    let errors = [];
-    if (Array.isArray(coordinates)) {
-        coordinates.forEach((val, index) => {
-            const t = _linearRingCoor(val, true);
+  let errors = [];
+  if (Array.isArray(coordinates)) {
+    coordinates.forEach((val, index) => {
+      const t = _linearRingCoor(val, true);
 
-            if (t.length) {
-                // modify the err msg from 'isPosition' to note the element number
-                t[0] = "at " + index + ": ".concat(t[0]);
-                // build a list of invalid positions
-                errors = errors.concat(t);
-            }
-        });
-    } else {
-        errors.push("coordinates must be an array");
-    }
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = `at ${index}: ${t[0]}`;
+        // build a list of invalid positions
+        errors = errors.concat(t);
+      }
+    });
+  } else {
+    errors.push("coordinates must be an array");
+  }
 
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -509,40 +514,40 @@ exports.isPolygonCoor = (coordinates, trace = false) => {
  * @return {Boolean}
  */
 exports.isPolygon = (polygon, trace = false) => {
-    if (!isObject(polygon)) {
-        return _done(trace, ["must be a JSON Object"]);
+  if (!isObject(polygon)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
+
+  let errors = [];
+
+  if ("bbox" in polygon) {
+    const t = exports.isBbox(polygon.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    let errors = [];
-
-    if ("bbox" in polygon) {
-        const t = exports.isBbox(polygon.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  if ("type" in polygon) {
+    if (polygon.type !== "Polygon") {
+      errors.push('type must be "Polygon"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("type" in polygon) {
-        if (polygon.type !== "Polygon") {
-            errors.push('type must be "Polygon"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("coordinates" in polygon) {
+    const t = exports.isPolygonCoor(polygon.coordinates, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    if ("coordinates" in polygon) {
-        const t = exports.isPolygonCoor(polygon.coordinates, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
-    }
+  // run custom checks
+  errors = errors.concat(_customDefinitions("Polygon", polygon));
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("Polygon", polygon));
-
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -553,22 +558,22 @@ exports.isPolygon = (polygon, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiPolygonCoor = (coordinates, trace = false) => {
-    let errors = [];
-    if (Array.isArray(coordinates)) {
-        coordinates.forEach((val, index) => {
-            const t = exports.isPolygonCoor(val, true);
-            if (t.length) {
-                // modify the err msg from 'isPosition' to note the element number
-                t[0] = "at " + index + ": ".concat(t[0]);
-                // build a list of invalid positions
-                errors = errors.concat(t);
-            }
-        });
-    } else {
-        errors.push("coordinates must be an array");
-    }
+  let errors = [];
+  if (Array.isArray(coordinates)) {
+    coordinates.forEach((val, index) => {
+      const t = exports.isPolygonCoor(val, true);
+      if (t.length) {
+        // modify the err msg from 'isPosition' to note the element number
+        t[0] = `at ${index}: ${t[0]}`;
+        // build a list of invalid positions
+        errors = errors.concat(t);
+      }
+    });
+  } else {
+    errors.push("coordinates must be an array");
+  }
 
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -579,39 +584,39 @@ exports.isMultiPolygonCoor = (coordinates, trace = false) => {
  * @return {Boolean}
  */
 exports.isMultiPolygon = (multiPolygon, trace = false) => {
-    if (!isObject(multiPolygon)) {
-        return _done(trace, ["must be a JSON Object"]);
+  if (!isObject(multiPolygon)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
+
+  let errors = [];
+  if ("bbox" in multiPolygon) {
+    const t = exports.isBbox(multiPolygon.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    let errors = [];
-    if ("bbox" in multiPolygon) {
-        const t = exports.isBbox(multiPolygon.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  if ("type" in multiPolygon) {
+    if (multiPolygon.type !== "MultiPolygon") {
+      errors.push('type must be "MultiPolygon"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if ("type" in multiPolygon) {
-        if (multiPolygon.type !== "MultiPolygon") {
-            errors.push('type must be "MultiPolygon"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("coordinates" in multiPolygon) {
+    const t = exports.isMultiPolygonCoor(multiPolygon.coordinates, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  } else {
+    errors.push('must have a member with the name "coordinates"');
+  }
 
-    if ("coordinates" in multiPolygon) {
-        const t = exports.isMultiPolygonCoor(multiPolygon.coordinates, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
-    } else {
-        errors.push('must have a member with the name "coordinates"');
-    }
+  // run custom checks
+  errors = errors.concat(_customDefinitions("MultiPolygon", multiPolygon));
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("MultiPolygon", multiPolygon));
-
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -622,48 +627,50 @@ exports.isMultiPolygon = (multiPolygon, trace = false) => {
  * @return {Boolean}
  */
 exports.isGeometryCollection = (geometryCollection, trace = false) => {
-    if (!isObject(geometryCollection)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(geometryCollection)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in geometryCollection) {
-        const t = exports.isBbox(geometryCollection.bbox, true);
+  let errors = [];
+  if ("bbox" in geometryCollection) {
+    const t = exports.isBbox(geometryCollection.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
+    }
+  }
+
+  if ("type" in geometryCollection) {
+    if (geometryCollection.type !== "GeometryCollection") {
+      errors.push('type must be "GeometryCollection"');
+    }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
+
+  if ("geometries" in geometryCollection) {
+    if (Array.isArray(geometryCollection.geometries)) {
+      geometryCollection.geometries.forEach((val, index) => {
+        const t = exports.isGeometryObject(val, true);
         if (t.length) {
-            errors = errors.concat(t);
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = `at ${index}: ${t[0]}`;
+          // build a list of invalid positions
+          errors = errors.concat(t);
         }
-    }
-
-    if ("type" in geometryCollection) {
-        if (geometryCollection.type !== "GeometryCollection") {
-            errors.push('type must be "GeometryCollection"');
-        }
+      });
     } else {
-        errors.push('must have a member with the name "type"');
+      errors.push('"geometries" must be an array');
     }
+  } else {
+    errors.push('must have a member with the name "geometries"');
+  }
 
-    if ("geometries" in geometryCollection) {
-        if (Array.isArray(geometryCollection.geometries)) {
-            geometryCollection.geometries.forEach((val, index) => {
-                const t = exports.isGeometryObject(val, true);
-                if (t.length) {
-                    // modify the err msg from 'isPosition' to note the element number
-                    t[0] = "at " + index + ": ".concat(t[0]);
-                    // build a list of invalide positions
-                    errors = errors.concat(t);
-                }
-            });
-        } else {
-            errors.push('"geometries" must be an array');
-        }
-    } else {
-        errors.push('must have a member with the name "geometries"');
-    }
+  // run custom checks
+  errors = errors.concat(
+    _customDefinitions("GeometryCollection", geometryCollection),
+  );
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("GeometryCollection", geometryCollection));
-
-    return _done(trace, errors);
+  return _done(trace, errors);
 };
 
 /**
@@ -675,44 +682,44 @@ exports.isGeometryCollection = (geometryCollection, trace = false) => {
  * @return {Boolean}
  */
 exports.isFeature = (feature, trace = false, makePropertiesRequired = true) => {
-    if (!isObject(feature)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(feature)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in feature) {
-        const t = exports.isBbox(feature.bbox, true);
-        if (t.length) {
-            errors = errors.concat(t);
-        }
+  let errors = [];
+  if ("bbox" in feature) {
+    const t = exports.isBbox(feature.bbox, true);
+    if (t.length) {
+      errors = errors.concat(t);
     }
+  }
 
-    if ("type" in feature) {
-        if (feature.type !== "Feature") {
-            errors.push('type must be "Feature"');
-        }
-    } else {
-        errors.push('must have a member with the name "type"');
+  if ("type" in feature) {
+    if (feature.type !== "Feature") {
+      errors.push('type must be "Feature"');
     }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
 
-    if (makePropertiesRequired && !("properties" in feature)) {
-        errors.push('must have a member with the name "properties"');
+  if (makePropertiesRequired && !("properties" in feature)) {
+    errors.push('must have a member with the name "properties"');
+  }
+
+  if ("geometry" in feature) {
+    if (feature.geometry !== null) {
+      const t = exports.isGeometryObject(feature.geometry, true);
+      if (t.length) {
+        errors = errors.concat(t);
+      }
     }
+  } else {
+    errors.push('must have a member with the name "geometry"');
+  }
 
-    if ("geometry" in feature) {
-        if (feature.geometry !== null) {
-            const t = exports.isGeometryObject(feature.geometry, true);
-            if (t.length) {
-                errors = errors.concat(t);
-            }
-        }
-    } else {
-        errors.push('must have a member with the name "geometry"');
-    }
-
-    // run custom checks
-    errors = errors.concat(_customDefinitions("Feature", feature));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("Feature", feature));
+  return _done(trace, errors);
 };
 
 /**
@@ -723,47 +730,49 @@ exports.isFeature = (feature, trace = false, makePropertiesRequired = true) => {
  * @return {Boolean}
  */
 exports.isFeatureCollection = (featureCollection, trace = false) => {
-    if (!isObject(featureCollection)) {
-        return _done(trace, ["must be a JSON Object"]);
-    }
+  if (!isObject(featureCollection)) {
+    return _done(trace, ["must be a JSON Object"]);
+  }
 
-    let errors = [];
-    if ("bbox" in featureCollection) {
-        const t = exports.isBbox(featureCollection.bbox, true);
+  let errors = [];
+  if ("bbox" in featureCollection) {
+    const t = exports.isBbox(featureCollection.bbox, true);
+    if (t.length) {
+      errors = t;
+    }
+  }
+
+  if ("type" in featureCollection) {
+    if (featureCollection.type !== "FeatureCollection") {
+      errors.push('type must be "FeatureCollection"');
+    }
+  } else {
+    errors.push('must have a member with the name "type"');
+  }
+
+  if ("features" in featureCollection) {
+    if (Array.isArray(featureCollection.features)) {
+      featureCollection.features.forEach((val, index) => {
+        const t = exports.isFeature(val, true);
         if (t.length) {
-            errors = t;
+          // modify the err msg from 'isPosition' to note the element number
+          t[0] = `at ${index}: ${t[0]}`;
+          // build a list of invalid positions
+          errors = errors.concat(t);
         }
-    }
-
-    if ("type" in featureCollection) {
-        if (featureCollection.type !== "FeatureCollection") {
-            errors.push('type must be "FeatureCollection"');
-        }
+      });
     } else {
-        errors.push('must have a member with the name "type"');
+      errors.push('"Features" must be an array');
     }
+  } else {
+    errors.push('must have a member with the name "Features"');
+  }
 
-    if ("features" in featureCollection) {
-        if (Array.isArray(featureCollection.features)) {
-            featureCollection.features.forEach((val, index) => {
-                const t = exports.isFeature(val, true);
-                if (t.length) {
-                    // modify the err msg from 'isPosition' to note the element number
-                    t[0] = "at " + index + ": ".concat(t[0]);
-                    // build a list of invalide positions
-                    errors = errors.concat(t);
-                }
-            });
-        } else {
-            errors.push('"Features" must be an array');
-        }
-    } else {
-        errors.push('must have a member with the name "Features"');
-    }
-
-    // run custom checks
-    errors = errors.concat(_customDefinitions("FeatureCollection", featureCollection));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(
+    _customDefinitions("FeatureCollection", featureCollection),
+  );
+  return _done(trace, errors);
 };
 
 /**
@@ -774,49 +783,49 @@ exports.isFeatureCollection = (featureCollection, trace = false) => {
  * @return {Boolean}
  */
 exports.isBbox = (bbox, trace = false) => {
-    let errors = [];
-    if (Array.isArray(bbox)) {
-        if (bbox.length % 2 !== 0) {
-            errors.push("bbox, must be a 2*n array");
-        }
-    } else {
-        errors.push("bbox must be an array");
+  let errors = [];
+  if (Array.isArray(bbox)) {
+    if (bbox.length % 2 !== 0) {
+      errors.push("bbox, must be a 2*n array");
     }
+  } else {
+    errors.push("bbox must be an array");
+  }
 
-    // run custom checks
-    errors = errors.concat(_customDefinitions("Bbox", bbox));
-    return _done(trace, errors);
+  // run custom checks
+  errors = errors.concat(_customDefinitions("Bbox", bbox));
+  return _done(trace, errors);
 };
 
 const nonGeoTypes = {
-    Feature: exports.isFeature,
-    FeatureCollection: exports.isFeatureCollection,
+  Feature: exports.isFeature,
+  FeatureCollection: exports.isFeatureCollection,
 };
 
 const geoTypes = {
-    Point: exports.isPoint,
-    MultiPoint: exports.isMultiPoint,
-    LineString: exports.isLineString,
-    MultiLineString: exports.isMultiLineString,
-    Polygon: exports.isPolygon,
-    MultiPolygon: exports.isMultiPolygon,
-    GeometryCollection: exports.isGeometryCollection,
+  Point: exports.isPoint,
+  MultiPoint: exports.isMultiPoint,
+  LineString: exports.isLineString,
+  MultiLineString: exports.isMultiLineString,
+  Polygon: exports.isPolygon,
+  MultiPolygon: exports.isMultiPolygon,
+  GeometryCollection: exports.isGeometryCollection,
 };
 
 const allTypes = {
-    Feature: exports.isFeature,
-    FeatureCollection: exports.isFeatureCollection,
-    Point: exports.isPoint,
-    MultiPoint: exports.isMultiPoint,
-    LineString: exports.isLineString,
-    MultiLineString: exports.isMultiLineString,
-    Polygon: exports.isPolygon,
-    MultiPolygon: exports.isMultiPolygon,
-    GeometryCollection: exports.isGeometryCollection,
-    Bbox: exports.isBbox,
-    Position: exports.isPosition,
-    GeoJSON: exports.isGeoJSONObject,
-    GeometryObject: exports.isGeometryObject,
+  Feature: exports.isFeature,
+  FeatureCollection: exports.isFeatureCollection,
+  Point: exports.isPoint,
+  MultiPoint: exports.isMultiPoint,
+  LineString: exports.isLineString,
+  MultiLineString: exports.isMultiLineString,
+  Polygon: exports.isPolygon,
+  MultiPolygon: exports.isMultiPolygon,
+  GeometryCollection: exports.isGeometryCollection,
+  Bbox: exports.isBbox,
+  Position: exports.isPosition,
+  GeoJSON: exports.isGeoJSONObject,
+  GeometryObject: exports.isGeometryObject,
 };
 
 exports.allTypes = allTypes;

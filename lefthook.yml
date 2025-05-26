@@ -1,6 +1,6 @@
-
 pre-commit:
   parallel: true
   jobs:
     - run: bun run format
+    - run: bun run lint
     - run: bun run test

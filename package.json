@@ -1,33 +1,29 @@
 {
-    "name": "geojson-validation",
-    "version": "2.0.0",
-    "description": "A GeoJSON Validation Library",
-    "main": "index.js",
-    "devDependencies": {
-        "documentation": "^14.0.3",
-        "lefthook": "^1.11.13",
-        "mocha": "^11.4.0",
-        "prettier": "3.5.3"
-    },
-    "scripts": {
-        "test": "mocha -R spec",
-        "build:docs": "documentation build -f md ./index.js > ./docs/index.md",
-        "format": "prettier --write ."
-    },
-    "bin": {
-        "gjv": "./bin/gjv"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
-    },
-    "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
-    "keywords": [
-        "GeoJSON",
-        "Validation",
-        "Geo",
-        "cli"
-    ],
-    "author": "mjbecze <mjbecze@gmail.com>",
-    "license": "LGPL-3"
+  "name": "geojson-validation",
+  "version": "2.0.0",
+  "description": "A GeoJSON Validation Library",
+  "main": "index.js",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "documentation": "^14.0.3",
+    "lefthook": "^1.11.13",
+    "mocha": "^11.4.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec",
+    "build:docs": "documentation build -f md ./index.js > ./docs/index.md",
+    "format": "biome format --write",
+    "lint": "biome lint --write"
+  },
+  "bin": {
+    "gjv": "./bin/gjv"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
+  },
+  "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
+  "keywords": ["GeoJSON", "Validation", "Geo", "cli"],
+  "author": "mjbecze <mjbecze@gmail.com>",
+  "license": "LGPL-3"
 }
