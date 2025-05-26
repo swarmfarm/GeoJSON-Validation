@@ -23,12 +23,7 @@
     "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
   },
   "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
-  "keywords": [
-    "GeoJSON",
-    "Validation",
-    "Geo",
-    "cli"
-  ],
+  "keywords": ["GeoJSON", "Validation", "Geo", "cli"],
   "author": "mjbecze <mjbecze@gmail.com>",
   "license": "LGPL-3"
 }

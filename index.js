@@ -122,7 +122,7 @@ exports.isPosition = (position, trace = false) => {
     position.forEach((pos, index) => {
       if (typeof pos !== "number") {
         errors.push(
-          `Position must only contain numbers. Item ${pos} at index ${index} is invalid.`
+          `Position must only contain numbers. Item ${pos} at index ${index} is invalid.`,
         );
       }
     });
@@ -156,7 +156,7 @@ exports.isGeoJSONObject = exports.valid = (geoJSONObject, trace = false) => {
       return geoTypes[geoJSONObject.type](geoJSONObject, trace);
     }
     errors.push(
-      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"'
+      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"',
     );
   } else {
     errors.push('must have a member with the name "type"');
@@ -186,7 +186,7 @@ exports.isGeometryObject = (geometryObject, trace = false) => {
     }
 
     errors.push(
-      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"'
+      'type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"',
     );
   } else {
     errors.push('must have a member with the name "type"');
@@ -443,7 +443,7 @@ exports.isMultiLineString = (multilineString, trace = false) => {
 
   // run custom checks
   errors = errors.concat(
-    _customDefinitions("MultiLineString", multilineString)
+    _customDefinitions("MultiLineString", multilineString),
   );
   return _done(trace, errors);
 };
@@ -669,7 +669,7 @@ exports.isGeometryCollection = (geometryCollection, trace = false) => {
 
   // run custom checks
   errors = errors.concat(
-    _customDefinitions("GeometryCollection", geometryCollection)
+    _customDefinitions("GeometryCollection", geometryCollection),
   );
 
   return _done(trace, errors);
@@ -772,7 +772,7 @@ exports.isFeatureCollection = (featureCollection, trace = false) => {
 
   // run custom checks
   errors = errors.concat(
-    _customDefinitions("FeatureCollection", featureCollection)
+    _customDefinitions("FeatureCollection", featureCollection),
   );
   return _done(trace, errors);
 };
