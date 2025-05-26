@@ -1,6 +1,6 @@
 {
   "name": "geojson-validation",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A GeoJSON Validation Library",
   "main": "index.js",
   "devDependencies": {
@@ -23,7 +23,12 @@
     "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
   },
   "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
-  "keywords": ["GeoJSON", "Validation", "Geo", "cli"],
+  "keywords": [
+    "GeoJSON",
+    "Validation",
+    "Geo",
+    "cli"
+  ],
   "author": "mjbecze <mjbecze@gmail.com>",
   "license": "LGPL-3"
 }
