@@ -15,3 +15,6 @@ nbproject
 *.swp
 *.swn
 *.swm
+
+# Build output
+dist/

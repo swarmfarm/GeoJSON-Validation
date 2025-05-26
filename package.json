@@ -1,30 +1,36 @@
 {
   "name": "geojson-validation",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A GeoJSON Validation Library",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "^1.2.14",
-    "documentation": "^14.0.3",
     "lefthook": "^1.11.13",
     "typescript": "^5.8.3"
   },
   "scripts": {
+    "build": "tsc",
     "test": "bun test",
-    "build:docs": "documentation build -f md ./index.js > ./docs/index.md",
     "format": "biome format --write",
-    "lint": "biome lint --write"
-  },
-  "bin": {
-    "gjv": "./bin/gjv"
+    "lint": "biome lint --write",
+    "prepack": "bun run build"
   },
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/mjbecze/GeoJSON-Validation.git"
   },
   "homepage": "https://gitlab.com/mjbecze/GeoJSON-Validation",
-  "keywords": ["GeoJSON", "Validation", "Geo", "cli"],
+  "keywords": [
+    "GeoJSON",
+    "Validation",
+    "Geo",
+    "cli"
+  ],
   "author": "mjbecze <mjbecze@gmail.com>",
   "license": "LGPL-3"
 }
