@@ -1,47 +1,35 @@
 {
-  "name": "geojson-validation",
-  "version": "2.1.3",
-  "description": "A GeoJSON Validation Library",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@swarmfarm/geojson-validation",
+    "version": "1.0.0",
+    "description": "A GeoJSON Validation Library",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "src"
+    ],
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@types/bun": "^1.2.14",
+        "lefthook": "^1.11.13",
+        "typescript": "^5.8.3"
+    },
+    "scripts": {
+        "clean": "rm -rf dist",
+        "prebuild": "bun run clean",
+        "test": "bun test",
+        "format": "biome format --write",
+        "lint": "biome lint --write",
+        "build": "bun build ./src/index.ts --outdir ./dist",
+        "postbuild": "tsc --emitDeclarationOnly --declaration --outDir ./dist",
+        "deploy": "bun publish --access restricted"
     }
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@types/bun": "^1.2.14",
-    "lefthook": "^1.11.13",
-    "typescript": "^5.8.3"
-  },
-  "scripts": {
-    "build": "tsc",
-    "clean": "rm -rf dist",
-    "prebuild": "bun run clean",
-    "test": "bun test",
-    "format": "biome format --write",
-    "lint": "biome lint --write",
-    "prepack": "bun run build",
-    "prepare": "bun run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/swarmfarm/GeoJSON-Validation.git"
-  },
-  "homepage": "https://github.com/swarmfarm/GeoJSON-Validation",
-  "keywords": [
-    "GeoJSON",
-    "Validation",
-    "Geo",
-    "cli",
-    "typescript",
-    "geospatial"
-  ]
 }
