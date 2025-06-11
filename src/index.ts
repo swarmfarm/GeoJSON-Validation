@@ -134,7 +134,7 @@ const validatorRegistry: ValidatorRegistry = {};
 const addValidator = (
   registry: ValidatorRegistry,
   type: GeoJSONObjectType,
-  validator: CustomValidator,
+  validator: CustomValidator
 ): ValidatorRegistry => ({
   ...registry,
   [type]: validator,
@@ -174,7 +174,7 @@ const isNumber = (value: unknown): value is number =>
  */
 const formatValidationResult = (
   trace: boolean,
-  errors: string[],
+  errors: string[]
 ): ValidationResult => {
   if (trace) {
     return [...errors]; // Return immutable copy
@@ -189,7 +189,7 @@ const formatValidationResult = (
 const executeCustomValidator = (
   validator: CustomValidator,
   type: string,
-  object: unknown,
+  object: unknown
 ): string[] => {
   try {
     const result = validator(object);
@@ -212,7 +212,7 @@ const executeCustomValidator = (
 const applyCustomValidations = (
   type: GeoJSONObjectType,
   object: unknown,
-  existingErrors: string[] = [],
+  existingErrors: string[] = []
 ): string[] => {
   const validator = validatorRegistry[type];
   if (!isFunction(validator)) {
@@ -233,7 +233,7 @@ const applyCustomValidations = (
  */
 export const isPosition = (
   position: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   const errors: string[] = [];
 
@@ -248,7 +248,7 @@ export const isPosition = (
       .filter(({ pos }) => !isNumber(pos))
       .map(
         ({ pos, index }) =>
-          `Position must only contain numbers. Item ${pos} at index ${index} is invalid.`,
+          `Position must only contain numbers. Item ${pos} at index ${index} is invalid.`
       );
 
     errors.push(...invalidElements);
@@ -283,7 +283,7 @@ const validateCoordinateArray = (
   coordinates: unknown,
   elementValidator: (element: unknown, trace: boolean) => ValidationResult,
   elementName: string,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   const errors: string[] = [];
 
@@ -310,7 +310,7 @@ const validateCoordinateArray = (
  */
 export const isMultiPointCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateCoordinateArray(coordinates, isPosition, "position", trace);
 
@@ -319,7 +319,7 @@ export const isMultiPointCoor = (
  */
 export const isLineStringCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (Array.isArray(coordinates) && coordinates.length <= 1) {
     const errors = ["coordinates must have at least two elements"];
@@ -334,7 +334,7 @@ export const isLineStringCoor = (
  */
 export const isMultiLineStringCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateCoordinateArray(coordinates, isLineStringCoor, "linestring", trace);
 
@@ -344,7 +344,7 @@ export const isMultiLineStringCoor = (
  */
 const isLinearRingCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   const errors: string[] = [];
 
@@ -375,7 +375,7 @@ const isLinearRingCoor = (
  */
 export const isPolygonCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateCoordinateArray(coordinates, isLinearRingCoor, "linear ring", trace);
 
@@ -384,7 +384,7 @@ export const isPolygonCoor = (
  */
 export const isMultiPolygonCoor = (
   coordinates: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateCoordinateArray(coordinates, isPolygonCoor, "polygon", trace);
 
@@ -397,7 +397,7 @@ const validateGeoJSONObject = (
   expectedType: string,
   coordinateValidator?: (coords: unknown, trace: boolean) => ValidationResult,
   customType: GeoJSONObjectType = expectedType as GeoJSONObjectType,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (!isObject(obj)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -445,38 +445,38 @@ export const isPoint = (point: unknown, trace = false): ValidationResult =>
 
 export const isMultiPoint = (
   multiPoint: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateGeoJSONObject(
     multiPoint,
     "MultiPoint",
     isMultiPointCoor,
     "MultiPoint",
-    trace,
+    trace
   );
 
 export const isLineString = (
   lineString: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateGeoJSONObject(
     lineString,
     "LineString",
     isLineStringCoor,
     "LineString",
-    trace,
+    trace
   );
 
 export const isMultiLineString = (
   multiLineString: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateGeoJSONObject(
     multiLineString,
     "MultiLineString",
     isMultiLineStringCoor,
     "MultiLineString",
-    trace,
+    trace
   );
 
 export const isPolygon = (polygon: unknown, trace = false): ValidationResult =>
@@ -484,14 +484,14 @@ export const isPolygon = (polygon: unknown, trace = false): ValidationResult =>
 
 export const isMultiPolygon = (
   multiPolygon: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult =>
   validateGeoJSONObject(
     multiPolygon,
     "MultiPolygon",
     isMultiPolygonCoor,
     "MultiPolygon",
-    trace,
+    trace
   );
 
 /**
@@ -499,7 +499,7 @@ export const isMultiPolygon = (
  */
 export const isGeometryCollection = (
   geometryCollection: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (!isObject(geometryCollection)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -534,7 +534,7 @@ export const isGeometryCollection = (
             return result.map((error) => `at ${index}: ${error}`);
           }
           return [];
-        },
+        }
       );
 
       errors.push(...geometryErrors);
@@ -548,7 +548,7 @@ export const isGeometryCollection = (
   const finalErrors = applyCustomValidations(
     "GeometryCollection",
     geometryCollection,
-    errors,
+    errors
   );
   return formatValidationResult(trace, finalErrors);
 };
@@ -563,7 +563,7 @@ export const isGeometryCollection = (
 export const isFeature = (
   feature: unknown,
   trace = false,
-  makePropertiesRequired = true,
+  makePropertiesRequired = false
 ): ValidationResult => {
   if (!isObject(feature)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -614,7 +614,7 @@ export const isFeature = (
  */
 export const isFeatureCollection = (
   featureCollection: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (!isObject(featureCollection)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -649,7 +649,7 @@ export const isFeatureCollection = (
             return result.map((error) => `at ${index}: ${error}`);
           }
           return [];
-        },
+        }
       );
 
       errors.push(...featureErrors);
@@ -663,7 +663,7 @@ export const isFeatureCollection = (
   const finalErrors = applyCustomValidations(
     "FeatureCollection",
     featureCollection,
-    errors,
+    errors
   );
   return formatValidationResult(trace, finalErrors);
 };
@@ -696,7 +696,7 @@ const nonGeometryValidators = Object.freeze({
  */
 export const isGeometryObject = (
   geometryObject: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (!isObject(geometryObject)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -707,7 +707,7 @@ export const isGeometryObject = (
     const finalErrors = applyCustomValidations(
       "GeometryObject",
       geometryObject,
-      errors,
+      errors
     );
     return formatValidationResult(trace, finalErrors);
   }
@@ -724,7 +724,7 @@ export const isGeometryObject = (
   const finalErrors = applyCustomValidations(
     "GeometryObject",
     geometryObject,
-    errors,
+    errors
   );
   return formatValidationResult(trace, finalErrors);
 };
@@ -735,7 +735,7 @@ export const isGeometryObject = (
  */
 export const isGeoJSONObject = (
   geoJSONObject: unknown,
-  trace = false,
+  trace = false
 ): ValidationResult => {
   if (!isObject(geoJSONObject)) {
     return formatValidationResult(trace, ["must be a JSON Object"]);
@@ -746,7 +746,7 @@ export const isGeoJSONObject = (
     const finalErrors = applyCustomValidations(
       "GeoJSON",
       geoJSONObject,
-      errors,
+      errors
     );
     return formatValidationResult(trace, finalErrors);
   }
